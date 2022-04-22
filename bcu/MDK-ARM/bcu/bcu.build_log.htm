@@ -1,0 +1,113 @@
+<html>
+<body>
+<pre>
+<h1>µVision Build Log</h1>
+<h2>Tool Versions:</h2>
+IDE-Version: µVision V5.31.0.0
+Copyright (C) 2020 ARM Ltd and ARM Germany GmbH. All rights reserved.
+License Information: Aleksandr Mikhalev, BMSTU, LIC=----
+ 
+Tool Versions:
+Toolchain:       MDK-Lite  Version: 5.31.0.0
+Toolchain Path:  F:\fs\keil\ARM\ARMCC\Bin
+C Compiler:      Armcc.exe V5.06 update 6 (build 750)
+Assembler:       Armasm.exe V5.06 update 6 (build 750)
+Linker/Locator:  ArmLink.exe V5.06 update 6 (build 750)
+Library Manager: ArmAr.exe V5.06 update 6 (build 750)
+Hex Converter:   FromElf.exe V5.06 update 6 (build 750)
+CPU DLL:         SARMCM3.DLL V5.31.0.0
+Dialog DLL:      DCM.DLL V1.17.3.0
+Target DLL:      STLink\ST-LINKIII-KEIL_SWO.dll V3.0.7.0
+Dialog DLL:      TCM.DLL V1.46.0.0
+ 
+<h2>Project:</h2>
+F:\fs_work\BCU\code\bcu\MDK-ARM\bcu.uvprojx
+Project File Date:  04/14/2022
+
+<h2>Output:</h2>
+*** Using Compiler 'V5.06 update 6 (build 750)', folder: 'F:\fs\keil\ARM\ARMCC\Bin'
+Build target 'bcu'
+compiling BCU.c...
+../Core/Inc/BCU.h(35): warning:  #1295-D: Deprecated declaration SetPoint_Setting - give arg types
+  void SetPoint_Setting ();
+../Core/Inc/BCU.h(36): warning:  #1295-D: Deprecated declaration SetPoint_to_ValveDutyCycle - give arg types
+  void SetPoint_to_ValveDutyCycle ();
+../Core/Inc/BCU.h(37): warning:  #1-D: last line of file ends without a newline
+  #endif /* __BCU_H */
+BCU.c(16): warning:  #68-D: integer conversion resulted in a change of sign
+      uint32_t max = -1;
+BCU.c(27): warning:  #223-D: function "abs" declared implicitly
+  		if (abs(left_sum - right_sum) >= max)
+BCU.c(37): warning:  #223-D: function "abs" declared implicitly
+  	if (abs(left_sum - right_sum) <= max)
+BCU.c(47): warning:  #223-D: function "abs" declared implicitly
+  	if (abs(left_sum - right_sum) == max)
+BCU.c(51): warning:  #1-D: last line of file ends without a newline
+  }
+BCU.c(17): warning:  #177-D: variable "min"  was declared but never referenced
+      uint32_t min = arr[0];
+BCU.c: 9 warnings, 0 errors
+compiling main.c...
+../Core/Inc/BCU.h(35): warning:  #1295-D: Deprecated declaration SetPoint_Setting - give arg types
+  void SetPoint_Setting ();
+../Core/Inc/BCU.h(36): warning:  #1295-D: Deprecated declaration SetPoint_to_ValveDutyCycle - give arg types
+  void SetPoint_to_ValveDutyCycle ();
+../Core/Inc/BCU.h(37): warning:  #1-D: last line of file ends without a newline
+  #endif /* __BCU_H */
+../Core/Src/main.c: 3 warnings, 0 errors
+compiling stm32f1xx_it.c...
+../Core/Inc/BCU.h(35): warning:  #1295-D: Deprecated declaration SetPoint_Setting - give arg types
+  void SetPoint_Setting ();
+../Core/Inc/BCU.h(36): warning:  #1295-D: Deprecated declaration SetPoint_to_ValveDutyCycle - give arg types
+  void SetPoint_to_ValveDutyCycle ();
+../Core/Inc/BCU.h(37): warning:  #1-D: last line of file ends without a newline
+  #endif /* __BCU_H */
+../Core/Src/stm32f1xx_it.c(217): warning:  #177-D: variable "mcuVoltage_ADC_codes_arr_size"  was declared but never referenced
+  	size_t mcuVoltage_ADC_codes_arr_size = sizeof(mcuVoltage_ADC_codes_arr)/sizeof(uint32_t);
+../Core/Src/stm32f1xx_it.c(218): warning:  #177-D: variable "PressureINFO_ADC_codes_arr_size"  was declared but never referenced
+  	size_t PressureINFO_ADC_codes_arr_size = sizeof(PressureINFO_ADC_codes_arr)/sizeof(uint32_t);
+../Core/Src/stm32f1xx_it.c(219): warning:  #177-D: variable "ValveINFO_ADC_codes_arr_size"  was declared but never referenced
+  	size_t ValveINFO_ADC_codes_arr_size = sizeof(ValveINFO_ADC_codes_arr)/sizeof(uint32_t);
+../Core/Src/stm32f1xx_it.c(220): warning:  #177-D: variable "mcuVoltage_ADC_code_median"  was declared but never referenced
+  	uint32_t mcuVoltage_ADC_code_median = 0;
+../Core/Src/stm32f1xx_it.c(221): warning:  #177-D: variable "PressureINFO_ADC_code_median"  was declared but never referenced
+  	uint32_t PressureINFO_ADC_code_median = 0;
+../Core/Src/stm32f1xx_it.c: 8 warnings, 0 errors
+compiling stm32f1xx_hal_msp.c...
+../Core/Inc/BCU.h(35): warning:  #1295-D: Deprecated declaration SetPoint_Setting - give arg types
+  void SetPoint_Setting ();
+../Core/Inc/BCU.h(36): warning:  #1295-D: Deprecated declaration SetPoint_to_ValveDutyCycle - give arg types
+  void SetPoint_to_ValveDutyCycle ();
+../Core/Inc/BCU.h(37): warning:  #1-D: last line of file ends without a newline
+  #endif /* __BCU_H */
+../Core/Src/stm32f1xx_hal_msp.c: 3 warnings, 0 errors
+linking...
+Program Size: Code=15490 RO-data=394 RW-data=48 ZI-data=3088  
+FromELF: creating hex file...
+"bcu\bcu.axf" - 0 Error(s), 23 Warning(s).
+
+<h2>Software Packages used:</h2>
+
+Package Vendor: ARM
+                http://www.keil.com/pack/ARM.CMSIS.5.7.0.pack
+                ARM.CMSIS.5.7.0
+                CMSIS (Cortex Microcontroller Software Interface Standard)
+   * Component: CORE Version: 5.4.0
+
+Package Vendor: Keil
+                http://www.keil.com/pack/Keil.STM32F1xx_DFP.2.3.0.pack
+                Keil.STM32F1xx_DFP.2.3.0
+                STMicroelectronics STM32F1 Series Device Support, Drivers and Examples
+
+<h2>Collection of Component include folders:</h2>
+  .\RTE\_bcu
+  C:\Users\mikha\AppData\Local\Arm\Packs\ARM\CMSIS\5.7.0\CMSIS\Core\Include
+  C:\Users\mikha\AppData\Local\Arm\Packs\Keil\STM32F1xx_DFP\2.3.0\Device\Include
+
+<h2>Collection of Component Files used:</h2>
+
+   * Component: ARM::CMSIS:CORE:5.4.0
+Build Time Elapsed:  00:00:10
+</pre>
+</body>
+</html>

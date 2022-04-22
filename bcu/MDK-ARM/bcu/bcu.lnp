@@ -1,0 +1,26 @@
+--cpu Cortex-M3
+"bcu\startup_stm32f105xc.o"
+"bcu\bcu.o"
+"bcu\main.o"
+"bcu\stm32f1xx_it.o"
+"bcu\stm32f1xx_hal_msp.o"
+"bcu\stm32f1xx_hal_gpio_ex.o"
+"bcu\stm32f1xx_hal_adc.o"
+"bcu\stm32f1xx_hal_adc_ex.o"
+"bcu\stm32f1xx_hal.o"
+"bcu\stm32f1xx_hal_rcc.o"
+"bcu\stm32f1xx_hal_rcc_ex.o"
+"bcu\stm32f1xx_hal_gpio.o"
+"bcu\stm32f1xx_hal_dma.o"
+"bcu\stm32f1xx_hal_cortex.o"
+"bcu\stm32f1xx_hal_pwr.o"
+"bcu\stm32f1xx_hal_flash.o"
+"bcu\stm32f1xx_hal_flash_ex.o"
+"bcu\stm32f1xx_hal_exti.o"
+"bcu\stm32f1xx_hal_tim.o"
+"bcu\stm32f1xx_hal_tim_ex.o"
+"bcu\system_stm32f1xx.o"
+--strict --scatter "bcu\bcu.sct"
+--summary_stderr --info summarysizes --map --load_addr_map_info --xref --callgraph --symbols
+--info sizes --info totals --info unused --info veneers
+--list "bcu.map" -o bcu\bcu.axf
