@@ -22,8 +22,11 @@
 
 #define MAX_BAR_PRESSURE_INFO 100         // 100 bar - It`s maximum pressure, wich Pressor sensor is possible to measure 
 #define MAX_BAR_VALVE_INFO  	6             // 5 volts -  maximum voltage of pressure sensor`s output signal
-#define MAX_DUTYCYCLE_CLOCKS 1000         // 100 bar - It`s maximum pressure, wich Pressor sensor is possible to measure 
-#define COEF_K_BRAKE_TO_VALVE 				1					/*Coefficient k (y=kx+b) for conversion needed pressure in brake system (NeededBrakePressure) to 
+#define MAX_DUTYCYCLE_CLOCKS_FOR_MAX_VALVE 1000         // 100 bar - It`s maximum pressure, wich Pressor sensor is possible to measure 
+
+#define REAL_MAX_DUTYCYCLE_CLOCKS_FROM_STM 1000         // 100 bar - It`s maximum pressure, wich Pressor sensor is possible to measure 
+
+#define COEF_K_BRAKE_TO_VALVE 				0.2482075					/*Coefficient k (y=kx+b) for conversion needed pressure in brake system (NeededBrakePressure) to 
 																									to pressure in valve for Pneumatic actuator in Pedal*/
 #define COEF_B_BRAKE_TO_VALVE 				0					/*Coefficient b (y=kx+b) for conversion needed pressure in brake system (NeededBrakePressure) to 
 																									to pressure in valve for Pneumatic actuator in Pedal*/
@@ -31,6 +34,8 @@
 																					Voltage devider before ADC. For example, Pressure info is 5V,
 																					there is 3.(148)V on stm ADC (PressureINFO3.3 on sheet),
 																					because of resistors voltage devider on the circuit board 3.1276596*/
+#define PID_PERIOD	0,1								/*PID_PERIOD  = MAX_COUNTER_PID_CLOCKS*(1/(APB2 timer Clocks/Prescaler/Counter Period))*/	
+#define MAX_COUNTER_PID_CLOCKS 72
 uint32_t MedianArray(uint32_t *arr, size_t size);
 void SetPoint_Setting ();
 void SetPoint_to_ValveDutyCycle ();

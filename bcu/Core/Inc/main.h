@@ -42,7 +42,11 @@ extern "C" {
 
 /* Exported constants --------------------------------------------------------*/
 /* USER CODE BEGIN EC */
-
+struct PID_calib
+{
+	float arr [100];
+	uint16_t counter;
+} ;
 /* USER CODE END EC */
 
 /* Exported macro ------------------------------------------------------------*/
@@ -53,6 +57,7 @@ extern float PressureINFO_Volts; // Signal from Pressure sensor in Volts (0-5V)
 extern float PressureINFO_Bars; // Pressure in braking system (Bars)
 extern uint16_t ValveDutyCycle[1]; // PWM duty cycle for Valve setpoint value
 extern float SetPoint; // Setpoint value for Valve in Bars (0-6 Bar)
+extern float SetPoint_Volts; 
 extern float NeededBrakePressure;
 extern float ActualPoint;
 extern float ActualPoint_Bars;
@@ -63,6 +68,7 @@ extern float errorPrevious_PID;
 extern float errorCurrent_PID;
 extern float errorIntegral_PID;
 extern float errorDifferential_PID;
+extern struct PID_calib PressureINFO_Bars_PID_calib;
 /* USER CODE END EM */
 
 void HAL_TIM_MspPostInit(TIM_HandleTypeDef *htim);
@@ -79,8 +85,16 @@ void Error_Handler(void);
 #define PressureINFO_GPIO_Port GPIOA
 #define ValveINFO_Pin GPIO_PIN_1
 #define ValveINFO_GPIO_Port GPIOA
+#define BA_CAN_RX_Pin GPIO_PIN_12
+#define BA_CAN_RX_GPIO_Port GPIOB
+#define BA_CAN_TX_Pin GPIO_PIN_13
+#define BA_CAN_TX_GPIO_Port GPIOB
 #define ValvePWM_Pin GPIO_PIN_8
 #define ValvePWM_GPIO_Port GPIOA
+#define MAINCAN_RX_Pin GPIO_PIN_8
+#define MAINCAN_RX_GPIO_Port GPIOB
+#define MAINCAN_TX_Pin GPIO_PIN_9
+#define MAINCAN_TX_GPIO_Port GPIOB
 /* USER CODE BEGIN Private defines */
 
 //#define MINIMUM_BATTERY_VOLTAGE 			3.2 /*Voltage devider before ADC. For example battery voltage is 5V, there is 2.5V on stm ADC */

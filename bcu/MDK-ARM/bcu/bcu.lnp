@@ -17,6 +17,7 @@
 "bcu\stm32f1xx_hal_flash.o"
 "bcu\stm32f1xx_hal_flash_ex.o"
 "bcu\stm32f1xx_hal_exti.o"
+"bcu\stm32f1xx_hal_can.o"
 "bcu\stm32f1xx_hal_tim.o"
 "bcu\stm32f1xx_hal_tim_ex.o"
 "bcu\system_stm32f1xx.o"

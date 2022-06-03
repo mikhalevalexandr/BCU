@@ -22,69 +22,39 @@ Dialog DLL:      TCM.DLL V1.46.0.0
  
 <h2>Project:</h2>
 F:\fs_work\BCU\code\bcu\MDK-ARM\bcu.uvprojx
-Project File Date:  04/14/2022
+Project File Date:  05/18/2022
 
 <h2>Output:</h2>
 *** Using Compiler 'V5.06 update 6 (build 750)', folder: 'F:\fs\keil\ARM\ARMCC\Bin'
 Build target 'bcu'
 compiling BCU.c...
-../Core/Inc/BCU.h(35): warning:  #1295-D: Deprecated declaration SetPoint_Setting - give arg types
+../Core/Inc/BCU.h(40): warning:  #1295-D: Deprecated declaration SetPoint_Setting - give arg types
   void SetPoint_Setting ();
-../Core/Inc/BCU.h(36): warning:  #1295-D: Deprecated declaration SetPoint_to_ValveDutyCycle - give arg types
+../Core/Inc/BCU.h(41): warning:  #1295-D: Deprecated declaration SetPoint_to_ValveDutyCycle - give arg types
   void SetPoint_to_ValveDutyCycle ();
-../Core/Inc/BCU.h(37): warning:  #1-D: last line of file ends without a newline
+../Core/Inc/BCU.h(42): warning:  #1295-D: Deprecated declaration SetPoint_Setting_PID - give arg types
+  void SetPoint_Setting_PID ();
+../Core/Inc/BCU.h(43): warning:  #1-D: last line of file ends without a newline
   #endif /* __BCU_H */
-BCU.c(16): warning:  #68-D: integer conversion resulted in a change of sign
+BCU.c(17): warning:  #68-D: integer conversion resulted in a change of sign
       uint32_t max = -1;
-BCU.c(27): warning:  #223-D: function "abs" declared implicitly
+BCU.c(28): warning:  #223-D: function "abs" declared implicitly
   		if (abs(left_sum - right_sum) >= max)
-BCU.c(37): warning:  #223-D: function "abs" declared implicitly
+BCU.c(38): warning:  #223-D: function "abs" declared implicitly
   	if (abs(left_sum - right_sum) <= max)
-BCU.c(47): warning:  #223-D: function "abs" declared implicitly
+BCU.c(48): warning:  #223-D: function "abs" declared implicitly
   	if (abs(left_sum - right_sum) == max)
-BCU.c(51): warning:  #1-D: last line of file ends without a newline
-  }
-BCU.c(17): warning:  #177-D: variable "min"  was declared but never referenced
+BCU.c(18): warning:  #177-D: variable "min"  was declared but never referenced
       uint32_t min = arr[0];
-BCU.c: 9 warnings, 0 errors
-compiling main.c...
-../Core/Inc/BCU.h(35): warning:  #1295-D: Deprecated declaration SetPoint_Setting - give arg types
-  void SetPoint_Setting ();
-../Core/Inc/BCU.h(36): warning:  #1295-D: Deprecated declaration SetPoint_to_ValveDutyCycle - give arg types
-  void SetPoint_to_ValveDutyCycle ();
-../Core/Inc/BCU.h(37): warning:  #1-D: last line of file ends without a newline
-  #endif /* __BCU_H */
-../Core/Src/main.c: 3 warnings, 0 errors
-compiling stm32f1xx_it.c...
-../Core/Inc/BCU.h(35): warning:  #1295-D: Deprecated declaration SetPoint_Setting - give arg types
-  void SetPoint_Setting ();
-../Core/Inc/BCU.h(36): warning:  #1295-D: Deprecated declaration SetPoint_to_ValveDutyCycle - give arg types
-  void SetPoint_to_ValveDutyCycle ();
-../Core/Inc/BCU.h(37): warning:  #1-D: last line of file ends without a newline
-  #endif /* __BCU_H */
-../Core/Src/stm32f1xx_it.c(217): warning:  #177-D: variable "mcuVoltage_ADC_codes_arr_size"  was declared but never referenced
-  	size_t mcuVoltage_ADC_codes_arr_size = sizeof(mcuVoltage_ADC_codes_arr)/sizeof(uint32_t);
-../Core/Src/stm32f1xx_it.c(218): warning:  #177-D: variable "PressureINFO_ADC_codes_arr_size"  was declared but never referenced
-  	size_t PressureINFO_ADC_codes_arr_size = sizeof(PressureINFO_ADC_codes_arr)/sizeof(uint32_t);
-../Core/Src/stm32f1xx_it.c(219): warning:  #177-D: variable "ValveINFO_ADC_codes_arr_size"  was declared but never referenced
-  	size_t ValveINFO_ADC_codes_arr_size = sizeof(ValveINFO_ADC_codes_arr)/sizeof(uint32_t);
-../Core/Src/stm32f1xx_it.c(220): warning:  #177-D: variable "mcuVoltage_ADC_code_median"  was declared but never referenced
-  	uint32_t mcuVoltage_ADC_code_median = 0;
-../Core/Src/stm32f1xx_it.c(221): warning:  #177-D: variable "PressureINFO_ADC_code_median"  was declared but never referenced
-  	uint32_t PressureINFO_ADC_code_median = 0;
-../Core/Src/stm32f1xx_it.c: 8 warnings, 0 errors
-compiling stm32f1xx_hal_msp.c...
-../Core/Inc/BCU.h(35): warning:  #1295-D: Deprecated declaration SetPoint_Setting - give arg types
-  void SetPoint_Setting ();
-../Core/Inc/BCU.h(36): warning:  #1295-D: Deprecated declaration SetPoint_to_ValveDutyCycle - give arg types
-  void SetPoint_to_ValveDutyCycle ();
-../Core/Inc/BCU.h(37): warning:  #1-D: last line of file ends without a newline
-  #endif /* __BCU_H */
-../Core/Src/stm32f1xx_hal_msp.c: 3 warnings, 0 errors
+BCU.c(61): warning:  #174-D: expression has no effect
+      errorDifferential_PID = (errorCurrent_PID - errorPrevious_PID) / (PID_PERIOD);
+BCU.c(74): warning:  #1-D: last line of file ends without a newline
+  }
+BCU.c: 11 warnings, 0 errors
 linking...
-Program Size: Code=15490 RO-data=394 RW-data=48 ZI-data=3088  
+Program Size: Code=19498 RO-data=394 RW-data=124 ZI-data=3668  
 FromELF: creating hex file...
-"bcu\bcu.axf" - 0 Error(s), 23 Warning(s).
+"bcu\bcu.axf" - 0 Error(s), 11 Warning(s).
 
 <h2>Software Packages used:</h2>
 
@@ -107,7 +77,7 @@ Package Vendor: Keil
 <h2>Collection of Component Files used:</h2>
 
    * Component: ARM::CMSIS:CORE:5.4.0
-Build Time Elapsed:  00:00:10
+Build Time Elapsed:  00:00:04
 </pre>
 </body>
 </html>

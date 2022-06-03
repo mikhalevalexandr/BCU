@@ -59,9 +59,17 @@
 
 /* External variables --------------------------------------------------------*/
 extern DMA_HandleTypeDef hdma_adc1;
+extern CAN_HandleTypeDef hcan1;
+extern CAN_HandleTypeDef hcan2;
 extern DMA_HandleTypeDef hdma_tim1_ch1;
 extern TIM_HandleTypeDef htim1;
 /* USER CODE BEGIN EV */
+extern CAN_TxHeaderTypeDef pTxHeader;
+extern CAN_RxHeaderTypeDef pRxHeader;
+extern uint32_t TxMailbox;
+extern uint8_t i;
+extern uint8_t TX_data[8];
+extern uint8_t Counter_for_PID;
 
 /* USER CODE END EV */
 
@@ -261,7 +269,7 @@ void DMA1_Channel1_IRQHandler(void)
 	ActualPoint = COEF_K_VALVE_INFO_ADC * VOLT_DEV_VALVE * ValveINFO_ADC_code_average * mcuVoltage / ADC_MAX;
 
 	PressureINFO_Bars = MAX_BAR_PRESSURE_INFO * PressureINFO_Volts / MAX_V_PRESSURE_INFO;
-	ActualPoint_Bars = MAX_BAR_VALVE_INFO * ActualPoint / MAX_V_PRESSURE_INFO;
+	ActualPoint_Bars = MAX_BAR_VALVE_INFO * ActualPoint / MAX_V_VALVE_INFO;
 	
 //	for (ADC_counter = 0; ADC_counter<100; ADC_counter++)
 //	{
@@ -284,10 +292,38 @@ void DMA1_Channel2_IRQHandler(void)
   /* USER CODE END DMA1_Channel2_IRQn 0 */
   HAL_DMA_IRQHandler(&hdma_tim1_ch1);
   /* USER CODE BEGIN DMA1_Channel2_IRQn 1 */
-	 SetPoint_Setting ();
+//	 SetPoint_Setting ();
 //	SetPoint_Setting_PID ();
 	 SetPoint_to_ValveDutyCycle ();
   /* USER CODE END DMA1_Channel2_IRQn 1 */
+}
+
+/**
+  * @brief This function handles CAN1 TX interrupt.
+  */
+void CAN1_TX_IRQHandler(void)
+{
+  /* USER CODE BEGIN CAN1_TX_IRQn 0 */
+
+  /* USER CODE END CAN1_TX_IRQn 0 */
+  HAL_CAN_IRQHandler(&hcan1);
+  /* USER CODE BEGIN CAN1_TX_IRQn 1 */
+
+  /* USER CODE END CAN1_TX_IRQn 1 */
+}
+
+/**
+  * @brief This function handles CAN1 RX0 interrupt.
+  */
+void CAN1_RX0_IRQHandler(void)
+{
+  /* USER CODE BEGIN CAN1_RX0_IRQn 0 */
+
+  /* USER CODE END CAN1_RX0_IRQn 0 */
+  HAL_CAN_IRQHandler(&hcan1);
+  /* USER CODE BEGIN CAN1_RX0_IRQn 1 */
+
+  /* USER CODE END CAN1_RX0_IRQn 1 */
 }
 
 /**
@@ -300,8 +336,51 @@ void TIM1_UP_IRQHandler(void)
   /* USER CODE END TIM1_UP_IRQn 0 */
   HAL_TIM_IRQHandler(&htim1);
   /* USER CODE BEGIN TIM1_UP_IRQn 1 */
-
+	Counter_for_PID++;
+	if (Counter_for_PID == MAX_COUNTER_PID_CLOCKS)
+	{
+		Counter_for_PID = 0;
+		SetPoint_Setting_PID ();
+		PressureINFO_Bars_PID_calib.arr[PressureINFO_Bars_PID_calib.counter] = PressureINFO_Bars;
+		PressureINFO_Bars_PID_calib.counter++;
+	}
+	if (PressureINFO_Bars_PID_calib.counter == 99)
+	{
+		for(uint16_t k = 0; k<100; k++)
+		{
+			PressureINFO_Bars_PID_calib.arr[k] = 0;
+		}
+		PressureINFO_Bars_PID_calib.counter = 0;
+	}
   /* USER CODE END TIM1_UP_IRQn 1 */
+}
+
+/**
+  * @brief This function handles CAN2 TX interrupt.
+  */
+void CAN2_TX_IRQHandler(void)
+{
+  /* USER CODE BEGIN CAN2_TX_IRQn 0 */
+
+  /* USER CODE END CAN2_TX_IRQn 0 */
+  HAL_CAN_IRQHandler(&hcan2);
+  /* USER CODE BEGIN CAN2_TX_IRQn 1 */
+
+  /* USER CODE END CAN2_TX_IRQn 1 */
+}
+
+/**
+  * @brief This function handles CAN2 RX0 interrupt.
+  */
+void CAN2_RX0_IRQHandler(void)
+{
+  /* USER CODE BEGIN CAN2_RX0_IRQn 0 */
+
+  /* USER CODE END CAN2_RX0_IRQn 0 */
+  HAL_CAN_IRQHandler(&hcan2);
+  /* USER CODE BEGIN CAN2_RX0_IRQn 1 */
+
+  /* USER CODE END CAN2_RX0_IRQn 1 */
 }
 
 /* USER CODE BEGIN 1 */

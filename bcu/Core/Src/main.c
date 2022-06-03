@@ -43,6 +43,9 @@
 ADC_HandleTypeDef hadc1;
 DMA_HandleTypeDef hdma_adc1;
 
+CAN_HandleTypeDef hcan1;
+CAN_HandleTypeDef hcan2;
+
 TIM_HandleTypeDef htim1;
 DMA_HandleTypeDef hdma_tim1_ch1;
 
@@ -54,18 +57,41 @@ float PressureINFO_Volts = 0; // Signal from Pressure sensor in Volts (0-5V)
 float PressureINFO_Bars = 0; // Actual pressure in braking system 
 uint16_t ValveDutyCycle[1] = {0,}; // PWM duty cycle for Valve setpoint value
 float SetPoint = 0; // Setpoint value for Valve in Bars (0-6 Bar)
-float NeededBrakePressure = 0; // Needed pressure in braking system 
+float SetPoint_Volts = 0; // Setpoint value for Valve in Volts (0-10 Volts)
+
+float NeededBrakePressure = 0.5; // Needed pressure in braking system 
 float ActualPoint = 0; // Actual value in Valve in Volts (0-5V)
 float ActualPoint_Bars = 0;// Actual value in Valve in Bars (0-6 Bar)
+uint8_t Counter_for_PID = 0;
+
+uint32_t PressureINFO_BarsU32 = 0; // Actual pressure in braking system U32
+float NeededBrakePressureBuf = 0; // Needed pressure in braking system U32
+float PressureINFO_BarsDebug = 0; // Actual pressure in braking system for Debug
+
+/*****************CAN******************/
+
+CAN_TxHeaderTypeDef pTxHeader; 
+CAN_RxHeaderTypeDef pRxHeader;
+uint32_t TxMailbox;
+uint8_t i = 0;
+uint8_t recieve = 0;
+uint8_t TX_data[8], RX_data[8];
+CAN_FilterTypeDef sFilterConfig;
+
+/**************************************/
 
 /*****************PID******************/
-float Kp_PID = 0; // Proportional coefficient for PID
-float Ki_PID = 0; // Integral coefficient for PID
-float Kd_PID = 0; // Differencial coefficient for PID
+float Kp_PID = 0.06; // Proportional coefficient for PID
+float Ki_PID = 0.05; // Integral coefficient for PID
+float Kd_PID = 0.005; // Differencial coefficient for PID
 float errorPrevious_PID = 0;
 float errorCurrent_PID = 0;
 float errorIntegral_PID = 0;
 float errorDifferential_PID = 0;
+// PID Calibration
+
+struct PID_calib PressureINFO_Bars_PID_calib = {0,};
+
 /**************************************/
 
 /* USER CODE END PV */
@@ -76,6 +102,8 @@ static void MX_GPIO_Init(void);
 static void MX_DMA_Init(void);
 static void MX_ADC1_Init(void);
 static void MX_TIM1_Init(void);
+static void MX_CAN1_Init(void);
+static void MX_CAN2_Init(void);
 /* USER CODE BEGIN PFP */
 
 /* USER CODE END PFP */
@@ -92,7 +120,9 @@ static void MX_TIM1_Init(void);
 int main(void)
 {
   /* USER CODE BEGIN 1 */
-
+	uint16_t i = 0;
+  TX_data[0] = 124;
+	PressureINFO_BarsDebug = 10.5;
   /* USER CODE END 1 */
 
   /* MCU Configuration--------------------------------------------------------*/
@@ -116,19 +146,51 @@ int main(void)
   MX_DMA_Init();
   MX_ADC1_Init();
   MX_TIM1_Init();
+  MX_CAN1_Init();
+  MX_CAN2_Init();
   /* USER CODE BEGIN 2 */
 	HAL_ADCEx_Calibration_Start(&hadc1);
 	HAL_ADC_Start_DMA ( &hadc1,  (uint32_t*)ADC, MEASURING_NUMBER_ALL_CHANNELS);
 	HAL_TIM_PWM_Start_DMA(&htim1, TIM_CHANNEL_1, (uint32_t*)ValveDutyCycle, 1);
+	HAL_TIM_Base_Start_IT(&htim1);
+
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
-  while (1)
+   while (1)
   {
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
+//		for (i = 157; i< 1000; i++)
+//		{
+//			HAL_Delay (1);
+//			ValveDutyCycle[0] = i;
+//						
+//		
+//		}	
+//		for (i = 1000; i> 157; i--)
+//		{
+//			HAL_Delay (1);
+//			ValveDutyCycle[0] = i;
+//						
+//		}
+//		PressureINFO_BarsU32 = *((uint32_t *)(&PressureINFO_Bars));
+		PressureINFO_BarsDebug = NeededBrakePressure+10;
+		PressureINFO_BarsU32 = *((uint32_t *)(&PressureINFO_BarsDebug));
+		for ( i = 0; i<4; i++)
+				TX_data[i] = (uint8_t) (PressureINFO_BarsU32>>(8*(3-i)));		
+		NeededBrakePressureBuf = 0;
+		for (i=0;	i<4; i++) // 3 - since it has to send last 3 bytes of unique identifier
+		{
+			*((uint32_t *)(&NeededBrakePressureBuf))|= (uint32_t) (RX_data[i]<<(8*(4-1-i)));
+		}	
+		NeededBrakePressure = NeededBrakePressureBuf;
+		recieve = RX_data[0];		
+		HAL_CAN_AddTxMessage(&hcan2, &pTxHeader, TX_data, &TxMailbox);
+
+		HAL_Delay(1000);
   }
   /* USER CODE END 3 */
 }
@@ -146,12 +208,13 @@ void SystemClock_Config(void)
   /** Initializes the RCC Oscillators according to the specified parameters
   * in the RCC_OscInitTypeDef structure.
   */
-  RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSI;
+  RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSE;
+  RCC_OscInitStruct.HSEState = RCC_HSE_ON;
+  RCC_OscInitStruct.HSEPredivValue = RCC_HSE_PREDIV_DIV1;
   RCC_OscInitStruct.HSIState = RCC_HSI_ON;
-  RCC_OscInitStruct.HSICalibrationValue = RCC_HSICALIBRATION_DEFAULT;
   RCC_OscInitStruct.Prediv1Source = RCC_PREDIV1_SOURCE_HSE;
   RCC_OscInitStruct.PLL.PLLState = RCC_PLL_ON;
-  RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_HSI_DIV2;
+  RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_HSE;
   RCC_OscInitStruct.PLL.PLLMUL = RCC_PLL_MUL9;
   RCC_OscInitStruct.PLL2.PLL2State = RCC_PLL_NONE;
   if (HAL_RCC_OscConfig(&RCC_OscInitStruct) != HAL_OK)
@@ -164,15 +227,15 @@ void SystemClock_Config(void)
                               |RCC_CLOCKTYPE_PCLK1|RCC_CLOCKTYPE_PCLK2;
   RCC_ClkInitStruct.SYSCLKSource = RCC_SYSCLKSOURCE_PLLCLK;
   RCC_ClkInitStruct.AHBCLKDivider = RCC_SYSCLK_DIV1;
-  RCC_ClkInitStruct.APB1CLKDivider = RCC_HCLK_DIV1;
+  RCC_ClkInitStruct.APB1CLKDivider = RCC_HCLK_DIV2;
   RCC_ClkInitStruct.APB2CLKDivider = RCC_HCLK_DIV1;
 
-  if (HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_1) != HAL_OK)
+  if (HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_2) != HAL_OK)
   {
     Error_Handler();
   }
   PeriphClkInit.PeriphClockSelection = RCC_PERIPHCLK_ADC;
-  PeriphClkInit.AdcClockSelection = RCC_ADCPCLK2_DIV4;
+  PeriphClkInit.AdcClockSelection = RCC_ADCPCLK2_DIV6;
   if (HAL_RCCEx_PeriphCLKConfig(&PeriphClkInit) != HAL_OK)
   {
     Error_Handler();
@@ -244,6 +307,146 @@ static void MX_ADC1_Init(void)
 }
 
 /**
+  * @brief CAN1 Initialization Function
+  * @param None
+  * @retval None
+  */
+static void MX_CAN1_Init(void)
+{
+
+  /* USER CODE BEGIN CAN1_Init 0 */
+
+  /* USER CODE END CAN1_Init 0 */
+
+  /* USER CODE BEGIN CAN1_Init 1 */
+
+  /* USER CODE END CAN1_Init 1 */
+  hcan1.Instance = CAN1;
+  hcan1.Init.Prescaler = 4;
+  hcan1.Init.Mode = CAN_MODE_NORMAL;
+  hcan1.Init.SyncJumpWidth = CAN_SJW_1TQ;
+  hcan1.Init.TimeSeg1 = CAN_BS1_7TQ;
+  hcan1.Init.TimeSeg2 = CAN_BS2_1TQ;
+  hcan1.Init.TimeTriggeredMode = DISABLE;
+  hcan1.Init.AutoBusOff = ENABLE;
+  hcan1.Init.AutoWakeUp = ENABLE;
+  hcan1.Init.AutoRetransmission = DISABLE;
+  hcan1.Init.ReceiveFifoLocked = DISABLE;
+  hcan1.Init.TransmitFifoPriority = DISABLE;
+  if (HAL_CAN_Init(&hcan1) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  /* USER CODE BEGIN CAN1_Init 2 */
+	pTxHeader.DLC = 8;
+	pTxHeader.IDE = CAN_ID_STD;
+	pTxHeader.RTR = CAN_RTR_DATA;
+	pTxHeader.StdId = 0x0002;
+	pTxHeader.TransmitGlobalTime = DISABLE;
+
+	sFilterConfig.FilterBank = 0;
+	sFilterConfig.FilterMode = CAN_FILTERMODE_IDLIST;
+	sFilterConfig.FilterFIFOAssignment = CAN_RX_FIFO0;
+	sFilterConfig.SlaveStartFilterBank = 0;
+	sFilterConfig.FilterIdHigh = 0x00fe<<5;
+	sFilterConfig.FilterIdLow = 0x0002<<5;
+	sFilterConfig.FilterMaskIdHigh = 0x0003<<5;
+	sFilterConfig.FilterMaskIdLow = 0x0004<<5;
+	sFilterConfig.FilterScale = CAN_FILTERSCALE_16BIT;
+	sFilterConfig.FilterActivation = ENABLE;
+  
+	if (HAL_CAN_ConfigFilter(&hcan1, &sFilterConfig)!= HAL_OK)
+    {
+      // Filter configuration Error 
+      Error_Handler();
+    }
+  
+	if(HAL_CAN_Start(&hcan1)!= HAL_OK)
+	{
+      //Start Error 
+		Error_Handler();
+    } 
+  /* Activate CAN RX notification */
+	if (HAL_CAN_ActivateNotification(&hcan1, CAN_IT_RX_FIFO0_MSG_PENDING | CAN_IT_TX_MAILBOX_EMPTY) != HAL_OK)
+	{
+     /* Notification Error */
+		Error_Handler();
+	}
+  /* USER CODE END CAN1_Init 2 */
+
+}
+
+/**
+  * @brief CAN2 Initialization Function
+  * @param None
+  * @retval None
+  */
+static void MX_CAN2_Init(void)
+{
+
+  /* USER CODE BEGIN CAN2_Init 0 */
+
+  /* USER CODE END CAN2_Init 0 */
+
+  /* USER CODE BEGIN CAN2_Init 1 */
+
+  /* USER CODE END CAN2_Init 1 */
+  hcan2.Instance = CAN2;
+  hcan2.Init.Prescaler = 4;
+  hcan2.Init.Mode = CAN_MODE_NORMAL;
+  hcan2.Init.SyncJumpWidth = CAN_SJW_1TQ;
+  hcan2.Init.TimeSeg1 = CAN_BS1_7TQ;
+  hcan2.Init.TimeSeg2 = CAN_BS2_1TQ;
+  hcan2.Init.TimeTriggeredMode = DISABLE;
+  hcan2.Init.AutoBusOff = ENABLE;
+  hcan2.Init.AutoWakeUp = ENABLE;
+  hcan2.Init.AutoRetransmission = DISABLE;
+  hcan2.Init.ReceiveFifoLocked = DISABLE;
+  hcan2.Init.TransmitFifoPriority = DISABLE;
+  if (HAL_CAN_Init(&hcan2) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  /* USER CODE BEGIN CAN2_Init 2 */
+	pTxHeader.DLC = 8;
+	pTxHeader.IDE = CAN_ID_STD;
+	pTxHeader.RTR = CAN_RTR_DATA;
+	pTxHeader.StdId = 0x0002;
+	pTxHeader.TransmitGlobalTime = DISABLE;
+
+	sFilterConfig.FilterBank = 0;
+	sFilterConfig.FilterMode = CAN_FILTERMODE_IDLIST;
+	sFilterConfig.FilterFIFOAssignment = CAN_RX_FIFO0;
+	sFilterConfig.SlaveStartFilterBank = 0;
+	sFilterConfig.FilterIdHigh = 0x00fe<<5;
+	sFilterConfig.FilterIdLow = 0x0002<<5;
+	sFilterConfig.FilterMaskIdHigh = 0x0003<<5;
+	sFilterConfig.FilterMaskIdLow = 0x0004<<5;
+	sFilterConfig.FilterScale = CAN_FILTERSCALE_16BIT;
+	sFilterConfig.FilterActivation = ENABLE;
+  
+	if (HAL_CAN_ConfigFilter(&hcan2, &sFilterConfig)!= HAL_OK)
+    {
+      // Filter configuration Error 
+      Error_Handler();
+    }
+  
+	if(HAL_CAN_Start(&hcan2)!= HAL_OK)
+	{
+      //Start Error 
+		Error_Handler();
+    } 
+  /* Activate CAN RX notification */
+	if (HAL_CAN_ActivateNotification(&hcan2, CAN_IT_RX_FIFO0_MSG_PENDING | CAN_IT_TX_MAILBOX_EMPTY) != HAL_OK)
+	{
+     /* Notification Error */
+		Error_Handler();
+	}
+  /* USER CODE END CAN2_Init 2 */
+
+}
+
+/**
   * @brief TIM1 Initialization Function
   * @param None
   * @retval None
@@ -264,7 +467,7 @@ static void MX_TIM1_Init(void)
 
   /* USER CODE END TIM1_Init 1 */
   htim1.Instance = TIM1;
-  htim1.Init.Prescaler = 0;
+  htim1.Init.Prescaler = 100;
   htim1.Init.CounterMode = TIM_COUNTERMODE_UP;
   htim1.Init.Period = 1000;
   htim1.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
@@ -346,12 +549,19 @@ static void MX_GPIO_Init(void)
 {
 
   /* GPIO Ports Clock Enable */
+  __HAL_RCC_GPIOD_CLK_ENABLE();
   __HAL_RCC_GPIOA_CLK_ENABLE();
+  __HAL_RCC_GPIOB_CLK_ENABLE();
 
 }
 
 /* USER CODE BEGIN 4 */
-
+void HAL_CAN_RxFifo0MsgPendingCallback(CAN_HandleTypeDef *hcan){
+	HAL_CAN_GetRxMessage(hcan, CAN_RX_FIFO0, &pRxHeader, RX_data);
+}
+void HAL_CAN_TxMailbox0CompleteCallback(CAN_HandleTypeDef*hcan) {
+//	HAL_GPIO_TogglePin(GPIOC, Led_Pin);
+}
 /* USER CODE END 4 */
 
 /**
