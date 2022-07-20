@@ -40,4 +40,5 @@ uint32_t MedianArray(uint32_t *arr, size_t size);
 void SetPoint_Setting ();
 void SetPoint_to_ValveDutyCycle ();
 void SetPoint_Setting_PID ();
+void SetPoint_Volts_to_ValveDutyCycle();
 #endif /* __BCU_H */

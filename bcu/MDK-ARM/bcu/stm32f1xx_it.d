@@ -34,3 +34,4 @@ bcu\stm32f1xx_it.o: ../Core/Inc/BCU.h
 bcu\stm32f1xx_it.o: ../Core/Inc/main.h
 bcu\stm32f1xx_it.o: F:\fs\keil\ARM\ARMCC\Bin\..\include\string.h
 bcu\stm32f1xx_it.o: ../Core/Inc/stm32f1xx_it.h
+bcu\stm32f1xx_it.o: ../Core/Inc/Voltages.h

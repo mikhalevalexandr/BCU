@@ -24,6 +24,7 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include "BCU.h"
+#include "Voltages.h"
 
 /* USER CODE END Includes */
 
@@ -63,6 +64,7 @@ extern CAN_HandleTypeDef hcan1;
 extern CAN_HandleTypeDef hcan2;
 extern DMA_HandleTypeDef hdma_tim1_ch1;
 extern TIM_HandleTypeDef htim1;
+extern TIM_HandleTypeDef htim2;
 /* USER CODE BEGIN EV */
 extern CAN_TxHeaderTypeDef pTxHeader;
 extern CAN_RxHeaderTypeDef pRxHeader;
@@ -264,8 +266,10 @@ void DMA1_Channel1_IRQHandler(void)
 	mcuVoltage_ADC_code_average/=MEASURING_NUMBER_EACH_CHANNEL;
 	PressureINFO_ADC_code_average/=MEASURING_NUMBER_EACH_CHANNEL;
 	ValveINFO_ADC_code_average/=MEASURING_NUMBER_EACH_CHANNEL;	
-	mcuVoltage = ADC_MAX * ADC_REFERENCE_VOLTAGE / mcuVoltage_ADC_code_average;
-	PressureINFO_Volts = COEF_K_PRESSURE_INFO_ADC * VOLT_DEV_PRESSURE * PressureINFO_ADC_code_average * mcuVoltage / ADC_MAX;
+//	mcuVoltage = ADC_MAX * ADC_REFERENCE_VOLTAGE / mcuVoltage_ADC_code_average;
+	PressureINFO_Input_Volts = PressureINFO_ADC_code_average * mcuVoltage / ADC_MAX;
+	PressureINFO_Volts = COEF_K_PRESSURE_INFO_ADC * VOLT_DEV_PRESSURE * PressureINFO_Input_Volts;
+	
 	ActualPoint = COEF_K_VALVE_INFO_ADC * VOLT_DEV_VALVE * ValveINFO_ADC_code_average * mcuVoltage / ADC_MAX;
 
 	PressureINFO_Bars = MAX_BAR_PRESSURE_INFO * PressureINFO_Volts / MAX_V_PRESSURE_INFO;
@@ -294,7 +298,8 @@ void DMA1_Channel2_IRQHandler(void)
   /* USER CODE BEGIN DMA1_Channel2_IRQn 1 */
 //	 SetPoint_Setting ();
 //	SetPoint_Setting_PID ();
-	 SetPoint_to_ValveDutyCycle ();
+//	 SetPoint_to_ValveDutyCycle ();
+	SetPoint_Volts_to_ValveDutyCycle();
   /* USER CODE END DMA1_Channel2_IRQn 1 */
 }
 
@@ -340,7 +345,7 @@ void TIM1_UP_IRQHandler(void)
 	if (Counter_for_PID == MAX_COUNTER_PID_CLOCKS)
 	{
 		Counter_for_PID = 0;
-		SetPoint_Setting_PID ();
+//		SetPoint_Setting_PID ();
 		PressureINFO_Bars_PID_calib.arr[PressureINFO_Bars_PID_calib.counter] = PressureINFO_Bars;
 		PressureINFO_Bars_PID_calib.counter++;
 	}
@@ -356,6 +361,32 @@ void TIM1_UP_IRQHandler(void)
 }
 
 /**
+  * @brief This function handles TIM2 global interrupt.
+  */
+void TIM2_IRQHandler(void)
+{
+  /* USER CODE BEGIN TIM2_IRQn 0 */
+
+  /* USER CODE END TIM2_IRQn 0 */
+  HAL_TIM_IRQHandler(&htim2);
+  /* USER CODE BEGIN TIM2_IRQn 1 */
+	if (Voltage_Testing.counter<1203)
+	{
+		SetPoint_Volts = Voltage_effort_Endurance[Voltage_Testing.counter];
+//		SetPoint_Volts = Voltage_effort_Step[Voltage_Testing.counter];
+//		SetPoint_Volts = Voltage_effort_Proportional[Voltage_Testing.counter];
+//			SetPoint_Volts = Voltage_effort_Sinus[Voltage_Testing.counter];		
+		Voltage_Testing.counter++;}
+	
+	else 
+	{SetPoint_Volts = 0;
+		Voltage_Testing.counter = 0;
+		Circle++;}
+//	SetPoint_Volts = 10;
+  /* USER CODE END TIM2_IRQn 1 */
+}
+
+/**
   * @brief This function handles CAN2 TX interrupt.
   */
 void CAN2_TX_IRQHandler(void)
@@ -365,7 +396,7 @@ void CAN2_TX_IRQHandler(void)
   /* USER CODE END CAN2_TX_IRQn 0 */
   HAL_CAN_IRQHandler(&hcan2);
   /* USER CODE BEGIN CAN2_TX_IRQn 1 */
-
+	
   /* USER CODE END CAN2_TX_IRQn 1 */
 }
 

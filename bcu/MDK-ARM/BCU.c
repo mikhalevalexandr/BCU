@@ -10,6 +10,11 @@ void SetPoint_to_ValveDutyCycle ()
 {
 	ValveDutyCycle[0] = -SetPoint/MAX_BAR_VALVE_INFO*MAX_DUTYCYCLE_CLOCKS_FOR_MAX_VALVE+REAL_MAX_DUTYCYCLE_CLOCKS_FROM_STM;
 }
+// For experiment
+void SetPoint_Volts_to_ValveDutyCycle ()
+{
+	ValveDutyCycle[0] = -SetPoint_Volts/MAX_V_VALVE_INFO*MAX_DUTYCYCLE_CLOCKS_FOR_MAX_VALVE+REAL_MAX_DUTYCYCLE_CLOCKS_FROM_STM;
+}
 uint32_t MedianArray(uint32_t *arr, size_t size) {
     // Находим min и max массива,
     // чтобы получить наибольшую разность;

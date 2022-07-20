@@ -22,7 +22,7 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-
+#include "Voltages.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -47,17 +47,20 @@ CAN_HandleTypeDef hcan1;
 CAN_HandleTypeDef hcan2;
 
 TIM_HandleTypeDef htim1;
+TIM_HandleTypeDef htim2;
 DMA_HandleTypeDef hdma_tim1_ch1;
 
 /* USER CODE BEGIN PV */
 uint32_t ADC[MEASURING_NUMBER_ALL_CHANNELS]={0};//buffer for reading battery voltage
 
-float mcuVoltage = 0; // STM32 power supply voltage
+float mcuVoltage = 3.3; // STM32 power supply voltage
 float PressureINFO_Volts = 0; // Signal from Pressure sensor in Volts (0-5V)
 float PressureINFO_Bars = 0; // Actual pressure in braking system 
 uint16_t ValveDutyCycle[1] = {0,}; // PWM duty cycle for Valve setpoint value
 float SetPoint = 0; // Setpoint value for Valve in Bars (0-6 Bar)
 float SetPoint_Volts = 0; // Setpoint value for Valve in Volts (0-10 Volts)
+
+float PressureINFO_Input_Volts = 0; //
 
 float NeededBrakePressure = 0.5; // Needed pressure in braking system 
 float ActualPoint = 0; // Actual value in Valve in Volts (0-5V)
@@ -92,6 +95,9 @@ float errorDifferential_PID = 0;
 
 struct PID_calib PressureINFO_Bars_PID_calib = {0,};
 
+
+
+uint32_t Circle = 0;
 /**************************************/
 
 /* USER CODE END PV */
@@ -104,6 +110,7 @@ static void MX_ADC1_Init(void);
 static void MX_TIM1_Init(void);
 static void MX_CAN1_Init(void);
 static void MX_CAN2_Init(void);
+static void MX_TIM2_Init(void);
 /* USER CODE BEGIN PFP */
 
 /* USER CODE END PFP */
@@ -148,12 +155,15 @@ int main(void)
   MX_TIM1_Init();
   MX_CAN1_Init();
   MX_CAN2_Init();
+  MX_TIM2_Init();
   /* USER CODE BEGIN 2 */
 	HAL_ADCEx_Calibration_Start(&hadc1);
 	HAL_ADC_Start_DMA ( &hadc1,  (uint32_t*)ADC, MEASURING_NUMBER_ALL_CHANNELS);
 	HAL_TIM_PWM_Start_DMA(&htim1, TIM_CHANNEL_1, (uint32_t*)ValveDutyCycle, 1);
 	HAL_TIM_Base_Start_IT(&htim1);
-
+	HAL_TIM_Base_Start_IT(&htim2);
+//	Voltage_Testing.arr = Voltage_effort_Endurance;
+	Voltage_Testing.counter = 0;
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -518,6 +528,51 @@ static void MX_TIM1_Init(void)
 
   /* USER CODE END TIM1_Init 2 */
   HAL_TIM_MspPostInit(&htim1);
+
+}
+
+/**
+  * @brief TIM2 Initialization Function
+  * @param None
+  * @retval None
+  */
+static void MX_TIM2_Init(void)
+{
+
+  /* USER CODE BEGIN TIM2_Init 0 */
+
+  /* USER CODE END TIM2_Init 0 */
+
+  TIM_ClockConfigTypeDef sClockSourceConfig = {0};
+  TIM_MasterConfigTypeDef sMasterConfig = {0};
+
+  /* USER CODE BEGIN TIM2_Init 1 */
+
+  /* USER CODE END TIM2_Init 1 */
+  htim2.Instance = TIM2;
+  htim2.Init.Prescaler = 79;
+  htim2.Init.CounterMode = TIM_COUNTERMODE_UP;
+  htim2.Init.Period = 45000;
+  htim2.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
+  htim2.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
+  if (HAL_TIM_Base_Init(&htim2) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  sClockSourceConfig.ClockSource = TIM_CLOCKSOURCE_INTERNAL;
+  if (HAL_TIM_ConfigClockSource(&htim2, &sClockSourceConfig) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  sMasterConfig.MasterOutputTrigger = TIM_TRGO_RESET;
+  sMasterConfig.MasterSlaveMode = TIM_MASTERSLAVEMODE_DISABLE;
+  if (HAL_TIMEx_MasterConfigSynchronization(&htim2, &sMasterConfig) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  /* USER CODE BEGIN TIM2_Init 2 */
+
+  /* USER CODE END TIM2_Init 2 */
 
 }
 

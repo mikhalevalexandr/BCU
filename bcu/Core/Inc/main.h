@@ -69,6 +69,14 @@ extern float errorCurrent_PID;
 extern float errorIntegral_PID;
 extern float errorDifferential_PID;
 extern struct PID_calib PressureINFO_Bars_PID_calib;
+
+extern float PressureINFO_Input_Volts;
+extern float Voltage_effort_Sinus[1202];
+extern float Voltage_effort_Step[721];
+extern float Voltage_effort_Proportional[781];
+extern float Voltage_effort_Endurance[1202];
+
+extern uint32_t Circle;
 /* USER CODE END EM */
 
 void HAL_TIM_MspPostInit(TIM_HandleTypeDef *htim);
