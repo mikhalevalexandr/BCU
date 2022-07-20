@@ -52,7 +52,7 @@ DMA_HandleTypeDef hdma_tim1_ch1;
 /* USER CODE BEGIN PV */
 uint32_t ADC[MEASURING_NUMBER_ALL_CHANNELS]={0};//buffer for reading battery voltage
 
-float mcuVoltage = 0; // STM32 power supply voltage
+float mcuVoltage = 3.3; // STM32 power supply voltage
 float PressureINFO_Volts = 0; // Signal from Pressure sensor in Volts (0-5V)
 float PressureINFO_Bars = 0; // Actual pressure in braking system 
 uint16_t ValveDutyCycle[1] = {0,}; // PWM duty cycle for Valve setpoint value

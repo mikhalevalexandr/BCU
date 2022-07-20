@@ -10,46 +10,46 @@ void SetPoint_to_ValveDutyCycle ()
 {
 	ValveDutyCycle[0] = -SetPoint/MAX_BAR_VALVE_INFO*MAX_DUTYCYCLE_CLOCKS_FOR_MAX_VALVE+REAL_MAX_DUTYCYCLE_CLOCKS_FROM_STM;
 }
-uint32_t MedianArray(uint32_t *arr, size_t size) {
-    // Находим min и max массива,
-    // чтобы получить наибольшую разность;
-		uint32_t median = 0;
-    uint32_t max = -1;
-    uint32_t min = arr[0];
-    uint32_t left_sum = 0;
-    uint32_t right_sum = 0;
-    for (size_t i = 1;i < size - 1;i++) {  // Минимальная разность		 
-		left_sum = 0;
-		right_sum = 0;
-		for (size_t j = 0;j < i;j++)
-		    left_sum += arr[j];
-		for (size_t k = i + 1;k < size;k++)
-		    right_sum += arr[k];
-		if (abs(left_sum - right_sum) >= max)
-		    max = abs(left_sum - right_sum);  
-    } 
-    for (size_t i = 1;i < size - 1;i++) {
-	left_sum = 0;
-	right_sum = 0;
-	for (size_t j = 0;j < i;j++)
-	    left_sum += arr[j];
-	for (size_t k = i + 1;k < size;k++)
-	    right_sum += arr[k];
-	if (abs(left_sum - right_sum) <= max)
-	    max = abs(left_sum - right_sum);
-    }
-    for (size_t i = 1;i < size - 1;i++) {
-	left_sum = 0;
-	right_sum = 0;
-	for (size_t j = 0;j < i;j++)
-	    left_sum += arr[j];
-	for (size_t k = i + 1;k < size;k++)
-	    right_sum += arr[k];
-	if (abs(left_sum - right_sum) == max)
-	    median = i;
-    }
-	return arr[median];
-}
+//uint32_t MedianArray(uint32_t *arr, size_t size) {
+//    // Находим min и max массива,
+//    // чтобы получить наибольшую разность;
+//		uint32_t median = 0;
+//    uint32_t max = -1;
+//    uint32_t min = arr[0];
+//    uint32_t left_sum = 0;
+//    uint32_t right_sum = 0;
+//    for (size_t i = 1;i < size - 1;i++) {  // Минимальная разность		 
+//		left_sum = 0;
+//		right_sum = 0;
+//		for (size_t j = 0;j < i;j++)
+//		    left_sum += arr[j];
+//		for (size_t k = i + 1;k < size;k++)
+//		    right_sum += arr[k];
+//		if (abs(left_sum - right_sum) >= max)
+//		    max = abs(left_sum - right_sum);  
+//    } 
+//    for (size_t i = 1;i < size - 1;i++) {
+//	left_sum = 0;
+//	right_sum = 0;
+//	for (size_t j = 0;j < i;j++)
+//	    left_sum += arr[j];
+//	for (size_t k = i + 1;k < size;k++)
+//	    right_sum += arr[k];
+//	if (abs(left_sum - right_sum) <= max)
+//	    max = abs(left_sum - right_sum);
+//    }
+//    for (size_t i = 1;i < size - 1;i++) {
+//	left_sum = 0;
+//	right_sum = 0;
+//	for (size_t j = 0;j < i;j++)
+//	    left_sum += arr[j];
+//	for (size_t k = i + 1;k < size;k++)
+//	    right_sum += arr[k];
+//	if (abs(left_sum - right_sum) == max)
+//	    median = i;
+//    }
+//	return arr[median];
+//}
 void SetPoint_Setting_PID ()
 {
     errorCurrent_PID = NeededBrakePressure - PressureINFO_Bars;

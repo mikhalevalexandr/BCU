@@ -4,6 +4,7 @@
 "bcu\main.o"
 "bcu\stm32f1xx_it.o"
 "bcu\stm32f1xx_hal_msp.o"
+"bcu\pressures.o"
 "bcu\stm32f1xx_hal_gpio_ex.o"
 "bcu\stm32f1xx_hal_adc.o"
 "bcu\stm32f1xx_hal_adc_ex.o"

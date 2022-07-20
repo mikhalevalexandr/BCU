@@ -22,12 +22,12 @@ Dialog DLL:      TCM.DLL V1.46.0.0
  
 <h2>Project:</h2>
 F:\fs_work\BCU\code\bcu\MDK-ARM\bcu.uvprojx
-Project File Date:  05/18/2022
+Project File Date:  07/20/2022
 
 <h2>Output:</h2>
 *** Using Compiler 'V5.06 update 6 (build 750)', folder: 'F:\fs\keil\ARM\ARMCC\Bin'
 Build target 'bcu'
-compiling BCU.c...
+compiling Pressures.c...
 ../Core/Inc/BCU.h(40): warning:  #1295-D: Deprecated declaration SetPoint_Setting - give arg types
   void SetPoint_Setting ();
 ../Core/Inc/BCU.h(41): warning:  #1295-D: Deprecated declaration SetPoint_to_ValveDutyCycle - give arg types
@@ -36,25 +36,15 @@ compiling BCU.c...
   void SetPoint_Setting_PID ();
 ../Core/Inc/BCU.h(43): warning:  #1-D: last line of file ends without a newline
   #endif /* __BCU_H */
-BCU.c(17): warning:  #68-D: integer conversion resulted in a change of sign
-      uint32_t max = -1;
-BCU.c(28): warning:  #223-D: function "abs" declared implicitly
-  		if (abs(left_sum - right_sum) >= max)
-BCU.c(38): warning:  #223-D: function "abs" declared implicitly
-  	if (abs(left_sum - right_sum) <= max)
-BCU.c(48): warning:  #223-D: function "abs" declared implicitly
-  	if (abs(left_sum - right_sum) == max)
-BCU.c(18): warning:  #177-D: variable "min"  was declared but never referenced
-      uint32_t min = arr[0];
-BCU.c(61): warning:  #174-D: expression has no effect
-      errorDifferential_PID = (errorCurrent_PID - errorPrevious_PID) / (PID_PERIOD);
-BCU.c(74): warning:  #1-D: last line of file ends without a newline
-  }
-BCU.c: 11 warnings, 0 errors
+../Core/Inc/pressures.h(5): warning:  #1-D: last line of file ends without a newline
+  #endif /* __PRESSURES_H */
+..\Core\Src\Pressures.c(1206): warning:  #1-D: last line of file ends without a newline
+  };
+..\Core\Src\Pressures.c: 6 warnings, 0 errors
 linking...
-Program Size: Code=19498 RO-data=394 RW-data=124 ZI-data=3668  
+Program Size: Code=19458 RO-data=394 RW-data=124 ZI-data=3668  
 FromELF: creating hex file...
-"bcu\bcu.axf" - 0 Error(s), 11 Warning(s).
+"bcu\bcu.axf" - 0 Error(s), 6 Warning(s).
 
 <h2>Software Packages used:</h2>
 

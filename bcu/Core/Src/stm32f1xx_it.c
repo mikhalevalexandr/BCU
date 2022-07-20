@@ -264,7 +264,7 @@ void DMA1_Channel1_IRQHandler(void)
 	mcuVoltage_ADC_code_average/=MEASURING_NUMBER_EACH_CHANNEL;
 	PressureINFO_ADC_code_average/=MEASURING_NUMBER_EACH_CHANNEL;
 	ValveINFO_ADC_code_average/=MEASURING_NUMBER_EACH_CHANNEL;	
-	mcuVoltage = ADC_MAX * ADC_REFERENCE_VOLTAGE / mcuVoltage_ADC_code_average;
+//	mcuVoltage = ADC_MAX * ADC_REFERENCE_VOLTAGE / mcuVoltage_ADC_code_average;
 	PressureINFO_Volts = COEF_K_PRESSURE_INFO_ADC * VOLT_DEV_PRESSURE * PressureINFO_ADC_code_average * mcuVoltage / ADC_MAX;
 	ActualPoint = COEF_K_VALVE_INFO_ADC * VOLT_DEV_VALVE * ValveINFO_ADC_code_average * mcuVoltage / ADC_MAX;
 
