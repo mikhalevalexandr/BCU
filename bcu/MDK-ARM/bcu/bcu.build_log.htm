@@ -28,23 +28,71 @@ Project File Date:  07/20/2022
 *** Using Compiler 'V5.06 update 6 (build 750)', folder: 'F:\fs\keil\ARM\ARMCC\Bin'
 Build target 'bcu'
 compiling Pressures.c...
-../Core/Inc/BCU.h(40): warning:  #1295-D: Deprecated declaration SetPoint_Setting - give arg types
-  void SetPoint_Setting ();
-../Core/Inc/BCU.h(41): warning:  #1295-D: Deprecated declaration SetPoint_to_ValveDutyCycle - give arg types
+../Core/Inc/BCU.h(44): warning:  #1295-D: Deprecated declaration SetPoint_to_ValveDutyCycle - give arg types
   void SetPoint_to_ValveDutyCycle ();
-../Core/Inc/BCU.h(42): warning:  #1295-D: Deprecated declaration SetPoint_Setting_PID - give arg types
+../Core/Inc/BCU.h(45): warning:  #1295-D: Deprecated declaration SetPoint_Setting_PID - give arg types
   void SetPoint_Setting_PID ();
-../Core/Inc/BCU.h(43): warning:  #1-D: last line of file ends without a newline
+../Core/Inc/BCU.h(46): warning:  #1-D: last line of file ends without a newline
   #endif /* __BCU_H */
 ../Core/Inc/pressures.h(5): warning:  #1-D: last line of file ends without a newline
   #endif /* __PRESSURES_H */
 ..\Core\Src\Pressures.c(1206): warning:  #1-D: last line of file ends without a newline
   };
-..\Core\Src\Pressures.c: 6 warnings, 0 errors
+..\Core\Src\Pressures.c: 5 warnings, 0 errors
+compiling BCU.c...
+../Core/Inc/BCU.h(44): warning:  #1295-D: Deprecated declaration SetPoint_to_ValveDutyCycle - give arg types
+  void SetPoint_to_ValveDutyCycle ();
+../Core/Inc/BCU.h(45): warning:  #1295-D: Deprecated declaration SetPoint_Setting_PID - give arg types
+  void SetPoint_Setting_PID ();
+../Core/Inc/BCU.h(46): warning:  #1-D: last line of file ends without a newline
+  #endif /* __BCU_H */
+BCU.c(46): warning:  #174-D: expression has no effect
+      errorDifferential_PID = (errorCurrent_PID - errorPrevious_PID) / (PID_PERIOD);
+BCU.c(52): warning:  #1-D: last line of file ends without a newline
+  }
+BCU.c: 5 warnings, 0 errors
+compiling main.c...
+../Core/Inc/BCU.h(44): warning:  #1295-D: Deprecated declaration SetPoint_to_ValveDutyCycle - give arg types
+  void SetPoint_to_ValveDutyCycle ();
+../Core/Inc/BCU.h(45): warning:  #1295-D: Deprecated declaration SetPoint_Setting_PID - give arg types
+  void SetPoint_Setting_PID ();
+../Core/Inc/BCU.h(46): warning:  #1-D: last line of file ends without a newline
+  #endif /* __BCU_H */
+../Core/Inc/pressures.h(5): warning:  #1-D: last line of file ends without a newline
+  #endif /* __PRESSURES_H */
+../Core/Src/main.c: 4 warnings, 0 errors
+compiling stm32f1xx_it.c...
+../Core/Inc/BCU.h(44): warning:  #1295-D: Deprecated declaration SetPoint_to_ValveDutyCycle - give arg types
+  void SetPoint_to_ValveDutyCycle ();
+../Core/Inc/BCU.h(45): warning:  #1295-D: Deprecated declaration SetPoint_Setting_PID - give arg types
+  void SetPoint_Setting_PID ();
+../Core/Inc/BCU.h(46): warning:  #1-D: last line of file ends without a newline
+  #endif /* __BCU_H */
+../Core/Inc/pressures.h(5): warning:  #1-D: last line of file ends without a newline
+  #endif /* __PRESSURES_H */
+../Core/Src/stm32f1xx_it.c(227): warning:  #177-D: variable "mcuVoltage_ADC_codes_arr_size"  was declared but never referenced
+  	size_t mcuVoltage_ADC_codes_arr_size = sizeof(mcuVoltage_ADC_codes_arr)/sizeof(uint32_t);
+../Core/Src/stm32f1xx_it.c(228): warning:  #177-D: variable "PressureINFO_ADC_codes_arr_size"  was declared but never referenced
+  	size_t PressureINFO_ADC_codes_arr_size = sizeof(PressureINFO_ADC_codes_arr)/sizeof(uint32_t);
+../Core/Src/stm32f1xx_it.c(229): warning:  #177-D: variable "ValveINFO_ADC_codes_arr_size"  was declared but never referenced
+  	size_t ValveINFO_ADC_codes_arr_size = sizeof(ValveINFO_ADC_codes_arr)/sizeof(uint32_t);
+../Core/Src/stm32f1xx_it.c(230): warning:  #177-D: variable "mcuVoltage_ADC_code_median"  was declared but never referenced
+  	uint32_t mcuVoltage_ADC_code_median = 0;
+../Core/Src/stm32f1xx_it.c(231): warning:  #177-D: variable "PressureINFO_ADC_code_median"  was declared but never referenced
+  	uint32_t PressureINFO_ADC_code_median = 0;
+../Core/Src/stm32f1xx_it.c: 9 warnings, 0 errors
+compiling stm32f1xx_hal_msp.c...
+../Core/Inc/BCU.h(44): warning:  #1295-D: Deprecated declaration SetPoint_to_ValveDutyCycle - give arg types
+  void SetPoint_to_ValveDutyCycle ();
+../Core/Inc/BCU.h(45): warning:  #1295-D: Deprecated declaration SetPoint_Setting_PID - give arg types
+  void SetPoint_Setting_PID ();
+../Core/Inc/BCU.h(46): warning:  #1-D: last line of file ends without a newline
+  #endif /* __BCU_H */
+../Core/Src/stm32f1xx_hal_msp.c: 3 warnings, 0 errors
 linking...
-Program Size: Code=19458 RO-data=394 RW-data=124 ZI-data=3668  
+Program Size: Code=19518 RO-data=394 RW-data=108 ZI-data=3740  
 FromELF: creating hex file...
-"bcu\bcu.axf" - 0 Error(s), 6 Warning(s).
+"bcu\bcu.axf" - 0 Error(s), 26 Warning(s).
 
 <h2>Software Packages used:</h2>
 
@@ -67,7 +115,7 @@ Package Vendor: Keil
 <h2>Collection of Component Files used:</h2>
 
    * Component: ARM::CMSIS:CORE:5.4.0
-Build Time Elapsed:  00:00:04
+Build Time Elapsed:  00:00:12
 </pre>
 </body>
 </html>

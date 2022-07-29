@@ -24,7 +24,7 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include "BCU.h"
-
+#include "pressures.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -63,6 +63,7 @@ extern CAN_HandleTypeDef hcan1;
 extern CAN_HandleTypeDef hcan2;
 extern DMA_HandleTypeDef hdma_tim1_ch1;
 extern TIM_HandleTypeDef htim1;
+extern TIM_HandleTypeDef htim2;
 /* USER CODE BEGIN EV */
 extern CAN_TxHeaderTypeDef pTxHeader;
 extern CAN_RxHeaderTypeDef pRxHeader;
@@ -217,6 +218,7 @@ void SysTick_Handler(void)
 void DMA1_Channel1_IRQHandler(void)
 {
   /* USER CODE BEGIN DMA1_Channel1_IRQn 0 */
+	/* In this handler mcuVoltage, Actual value of pressure from Valve, Pressure in brakes are measured */
 	uint16_t ADC_counter = 0;
 	uint16_t arrays_counter = 0;
 	uint32_t mcuVoltage_ADC_codes_arr[MEASURING_NUMBER_EACH_CHANNEL] = {0,};// MCU supply Voltage
@@ -288,7 +290,7 @@ void DMA1_Channel1_IRQHandler(void)
 void DMA1_Channel2_IRQHandler(void)
 {
   /* USER CODE BEGIN DMA1_Channel2_IRQn 0 */
-
+	/*Here we change PWM duty cycle for Valve*/
   /* USER CODE END DMA1_Channel2_IRQn 0 */
   HAL_DMA_IRQHandler(&hdma_tim1_ch1);
   /* USER CODE BEGIN DMA1_Channel2_IRQn 1 */
@@ -332,15 +334,18 @@ void CAN1_RX0_IRQHandler(void)
 void TIM1_UP_IRQHandler(void)
 {
   /* USER CODE BEGIN TIM1_UP_IRQn 0 */
-
+/*This timer is used for setting SetPoint every 0,1 second*/
   /* USER CODE END TIM1_UP_IRQn 0 */
   HAL_TIM_IRQHandler(&htim1);
   /* USER CODE BEGIN TIM1_UP_IRQn 1 */
 	Counter_for_PID++;
+	/*When Counter_for_PID = MAX_COUNTER_PID_CLOCKS (72), it means that 0,1 second has passed*/
 	if (Counter_for_PID == MAX_COUNTER_PID_CLOCKS)
 	{
 		Counter_for_PID = 0;
 		SetPoint_Setting_PID ();
+		/*In fact, It isn`t used. I don`t remember, why I wrote this next code until the end of this function*/
+		/*I think, it is how i selected Kp_PID, Ki_PID, Kd_PID*/
 		PressureINFO_Bars_PID_calib.arr[PressureINFO_Bars_PID_calib.counter] = PressureINFO_Bars;
 		PressureINFO_Bars_PID_calib.counter++;
 	}
@@ -352,7 +357,38 @@ void TIM1_UP_IRQHandler(void)
 		}
 		PressureINFO_Bars_PID_calib.counter = 0;
 	}
+	/***********************************************/
   /* USER CODE END TIM1_UP_IRQn 1 */
+}
+
+/**
+  * @brief This function handles TIM2 global interrupt.
+  */
+void TIM2_IRQHandler(void)
+{
+  /* USER CODE BEGIN TIM2_IRQn 0 */
+/* This timer is made for Amesim tests. Pressures is taken from array in file pressures.c
+	
+	
+	Don`t use whole this func in final project
+	
+*/	
+  /* USER CODE END TIM2_IRQn 0 */
+  HAL_TIM_IRQHandler(&htim2);
+  /* USER CODE BEGIN TIM2_IRQn 1 */
+//	if (Pressurescounter<1203)
+//	{
+//		SetPoint_Volts = Pressures_effort_Endurance[Pressurescounter];
+//		SetPoint_Volts = Voltage_effort_Step[Voltage_Testing.counter];
+//		SetPoint_Volts = Voltage_effort_Proportional[Voltage_Testing.counter];
+//			SetPoint_Volts = Voltage_effort_Sinus[Voltage_Testing.counter];		
+//		Pressurescounter++;}
+	
+//	else 
+//	{SetPoint_Volts = 0;
+//		Pressurescounter = 0;
+//		Circle++;}
+  /* USER CODE END TIM2_IRQn 1 */
 }
 
 /**

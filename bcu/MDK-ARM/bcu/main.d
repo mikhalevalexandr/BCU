@@ -33,3 +33,4 @@ bcu\main.o: ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_tim_ex.h
 bcu\main.o: ../Core/Inc/BCU.h
 bcu\main.o: ../Core/Inc/main.h
 bcu\main.o: F:\fs\keil\ARM\ARMCC\Bin\..\include\string.h
+bcu\main.o: ../Core/Inc/pressures.h

@@ -22,7 +22,7 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-
+#include "pressures.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -47,6 +47,7 @@ CAN_HandleTypeDef hcan1;
 CAN_HandleTypeDef hcan2;
 
 TIM_HandleTypeDef htim1;
+TIM_HandleTypeDef htim2;
 DMA_HandleTypeDef hdma_tim1_ch1;
 
 /* USER CODE BEGIN PV */
@@ -65,8 +66,12 @@ float ActualPoint_Bars = 0;// Actual value in Valve in Bars (0-6 Bar)
 uint8_t Counter_for_PID = 0;
 
 uint32_t PressureINFO_BarsU32 = 0; // Actual pressure in braking system U32
-float NeededBrakePressureBuf = 0; // Needed pressure in braking system U32
-float PressureINFO_BarsDebug = 0; // Actual pressure in braking system for Debug
+float NeededBrakePressureBuf = 0; // Needed pressure in braking system 
+//float PressureINFO_BarsDebug = 0; // Actual pressure in braking system for Debug
+
+/*********FSG_TEST*************/ // Comment it in final project
+uint16_t Pressurescounter = 0;
+uint8_t Circle = 0;
 
 /*****************CAN******************/
 
@@ -75,7 +80,7 @@ CAN_RxHeaderTypeDef pRxHeader;
 uint32_t TxMailbox;
 uint8_t i = 0;
 uint8_t recieve = 0;
-uint8_t TX_data[8], RX_data[8];
+uint8_t TX_data[1], RX_data[1]; //Buffers for BA_CAN for pressure setting
 CAN_FilterTypeDef sFilterConfig;
 
 /**************************************/
@@ -104,6 +109,7 @@ static void MX_ADC1_Init(void);
 static void MX_TIM1_Init(void);
 static void MX_CAN1_Init(void);
 static void MX_CAN2_Init(void);
+static void MX_TIM2_Init(void);
 /* USER CODE BEGIN PFP */
 
 /* USER CODE END PFP */
@@ -120,9 +126,9 @@ static void MX_CAN2_Init(void);
 int main(void)
 {
   /* USER CODE BEGIN 1 */
-	uint16_t i = 0;
-  TX_data[0] = 124;
-	PressureINFO_BarsDebug = 10.5;
+//	uint16_t i = 0;
+//  TX_data[0] = 124;
+//	PressureINFO_BarsDebug = 10.5;
   /* USER CODE END 1 */
 
   /* MCU Configuration--------------------------------------------------------*/
@@ -148,6 +154,7 @@ int main(void)
   MX_TIM1_Init();
   MX_CAN1_Init();
   MX_CAN2_Init();
+  MX_TIM2_Init();
   /* USER CODE BEGIN 2 */
 	HAL_ADCEx_Calibration_Start(&hadc1);
 	HAL_ADC_Start_DMA ( &hadc1,  (uint32_t*)ADC, MEASURING_NUMBER_ALL_CHANNELS);
@@ -163,34 +170,9 @@ int main(void)
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
-//		for (i = 157; i< 1000; i++)
-//		{
-//			HAL_Delay (1);
-//			ValveDutyCycle[0] = i;
-//						
-//		
-//		}	
-//		for (i = 1000; i> 157; i--)
-//		{
-//			HAL_Delay (1);
-//			ValveDutyCycle[0] = i;
-//						
-//		}
-//		PressureINFO_BarsU32 = *((uint32_t *)(&PressureINFO_Bars));
-		PressureINFO_BarsDebug = NeededBrakePressure+10;
-		PressureINFO_BarsU32 = *((uint32_t *)(&PressureINFO_BarsDebug));
-		for ( i = 0; i<4; i++)
-				TX_data[i] = (uint8_t) (PressureINFO_BarsU32>>(8*(3-i)));		
-		NeededBrakePressureBuf = 0;
-		for (i=0;	i<4; i++) // 3 - since it has to send last 3 bytes of unique identifier
-		{
-			*((uint32_t *)(&NeededBrakePressureBuf))|= (uint32_t) (RX_data[i]<<(8*(4-1-i)));
-		}	
-		NeededBrakePressure = NeededBrakePressureBuf;
-		recieve = RX_data[0];		
+		TX_data[0] = (uint8_t) (PressureINFO_Bars);		
+		NeededBrakePressure = RX_data[0];
 		HAL_CAN_AddTxMessage(&hcan2, &pTxHeader, TX_data, &TxMailbox);
-
-		HAL_Delay(1000);
   }
   /* USER CODE END 3 */
 }
@@ -408,7 +390,7 @@ static void MX_CAN2_Init(void)
     Error_Handler();
   }
   /* USER CODE BEGIN CAN2_Init 2 */
-	pTxHeader.DLC = 8;
+	pTxHeader.DLC = 1;
 	pTxHeader.IDE = CAN_ID_STD;
 	pTxHeader.RTR = CAN_RTR_DATA;
 	pTxHeader.StdId = 0x0002;
@@ -518,6 +500,51 @@ static void MX_TIM1_Init(void)
 
   /* USER CODE END TIM1_Init 2 */
   HAL_TIM_MspPostInit(&htim1);
+
+}
+
+/**
+  * @brief TIM2 Initialization Function
+  * @param None
+  * @retval None
+  */
+static void MX_TIM2_Init(void)
+{
+
+  /* USER CODE BEGIN TIM2_Init 0 */
+
+  /* USER CODE END TIM2_Init 0 */
+
+  TIM_ClockConfigTypeDef sClockSourceConfig = {0};
+  TIM_MasterConfigTypeDef sMasterConfig = {0};
+
+  /* USER CODE BEGIN TIM2_Init 1 */
+
+  /* USER CODE END TIM2_Init 1 */
+  htim2.Instance = TIM2;
+  htim2.Init.Prescaler = 79;
+  htim2.Init.CounterMode = TIM_COUNTERMODE_UP;
+  htim2.Init.Period = 45000;
+  htim2.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
+  htim2.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
+  if (HAL_TIM_Base_Init(&htim2) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  sClockSourceConfig.ClockSource = TIM_CLOCKSOURCE_INTERNAL;
+  if (HAL_TIM_ConfigClockSource(&htim2, &sClockSourceConfig) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  sMasterConfig.MasterOutputTrigger = TIM_TRGO_RESET;
+  sMasterConfig.MasterSlaveMode = TIM_MASTERSLAVEMODE_DISABLE;
+  if (HAL_TIMEx_MasterConfigSynchronization(&htim2, &sMasterConfig) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  /* USER CODE BEGIN TIM2_Init 2 */
+
+  /* USER CODE END TIM2_Init 2 */
 
 }
 

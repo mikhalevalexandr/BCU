@@ -69,6 +69,10 @@ extern float errorCurrent_PID;
 extern float errorIntegral_PID;
 extern float errorDifferential_PID;
 extern struct PID_calib PressureINFO_Bars_PID_calib;
+
+
+extern uint16_t Pressurescounter;
+extern uint8_t Circle;
 /* USER CODE END EM */
 
 void HAL_TIM_MspPostInit(TIM_HandleTypeDef *htim);
