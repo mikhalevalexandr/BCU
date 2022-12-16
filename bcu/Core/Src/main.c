@@ -307,8 +307,8 @@ static void MX_CAN1_Init(void)
   hcan1.Init.Prescaler = 4;
   hcan1.Init.Mode = CAN_MODE_NORMAL;
   hcan1.Init.SyncJumpWidth = CAN_SJW_1TQ;
-  hcan1.Init.TimeSeg1 = CAN_BS1_7TQ;
-  hcan1.Init.TimeSeg2 = CAN_BS2_1TQ;
+  hcan1.Init.TimeSeg1 = CAN_BS1_15TQ;
+  hcan1.Init.TimeSeg2 = CAN_BS2_2TQ;
   hcan1.Init.TimeTriggeredMode = DISABLE;
   hcan1.Init.AutoBusOff = ENABLE;
   hcan1.Init.AutoWakeUp = ENABLE;
@@ -323,7 +323,7 @@ static void MX_CAN1_Init(void)
 	pTxHeader.DLC = 8;
 	pTxHeader.IDE = CAN_ID_STD;
 	pTxHeader.RTR = CAN_RTR_DATA;
-	pTxHeader.StdId = 0x0002;
+	pTxHeader.StdId = 0x0355;
 	pTxHeader.TransmitGlobalTime = DISABLE;
 
 	sFilterConfig.FilterBank = 0;
@@ -377,8 +377,8 @@ static void MX_CAN2_Init(void)
   hcan2.Init.Prescaler = 4;
   hcan2.Init.Mode = CAN_MODE_NORMAL;
   hcan2.Init.SyncJumpWidth = CAN_SJW_1TQ;
-  hcan2.Init.TimeSeg1 = CAN_BS1_7TQ;
-  hcan2.Init.TimeSeg2 = CAN_BS2_1TQ;
+  hcan2.Init.TimeSeg1 = CAN_BS1_15TQ;
+  hcan2.Init.TimeSeg2 = CAN_BS2_2TQ;
   hcan2.Init.TimeTriggeredMode = DISABLE;
   hcan2.Init.AutoBusOff = ENABLE;
   hcan2.Init.AutoWakeUp = ENABLE;
@@ -393,17 +393,17 @@ static void MX_CAN2_Init(void)
 	pTxHeader.DLC = 1;
 	pTxHeader.IDE = CAN_ID_STD;
 	pTxHeader.RTR = CAN_RTR_DATA;
-	pTxHeader.StdId = 0x0002;
+	pTxHeader.StdId = 0x0750;
 	pTxHeader.TransmitGlobalTime = DISABLE;
 
 	sFilterConfig.FilterBank = 0;
 	sFilterConfig.FilterMode = CAN_FILTERMODE_IDLIST;
 	sFilterConfig.FilterFIFOAssignment = CAN_RX_FIFO0;
 	sFilterConfig.SlaveStartFilterBank = 0;
-	sFilterConfig.FilterIdHigh = 0x00fe<<5;
-	sFilterConfig.FilterIdLow = 0x0002<<5;
-	sFilterConfig.FilterMaskIdHigh = 0x0003<<5;
-	sFilterConfig.FilterMaskIdLow = 0x0004<<5;
+	sFilterConfig.FilterIdHigh = 0x0521<<5;
+	sFilterConfig.FilterIdLow = 0x0521<<5;
+	sFilterConfig.FilterMaskIdHigh = 0x0521<<5;
+	sFilterConfig.FilterMaskIdLow = 0x0521<<5;
 	sFilterConfig.FilterScale = CAN_FILTERSCALE_16BIT;
 	sFilterConfig.FilterActivation = ENABLE;
   
