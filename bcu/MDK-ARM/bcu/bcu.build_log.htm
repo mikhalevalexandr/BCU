@@ -22,12 +22,12 @@ Dialog DLL:      TCM.DLL V1.46.0.0
  
 <h2>Project:</h2>
 F:\fs_work\BCU\code\bcu\MDK-ARM\bcu.uvprojx
-Project File Date:  12/16/2022
+Project File Date:  12/23/2022
 
 <h2>Output:</h2>
 *** Using Compiler 'V5.06 update 6 (build 750)', folder: 'F:\fs\keil\ARM\ARMCC\Bin'
 Build target 'bcu'
-compiling main.c...
+compiling stm32f1xx_it.c...
 ../Core/Inc/BCU.h(44): warning:  #1295-D: Deprecated declaration SetPoint_to_ValveDutyCycle - give arg types
   void SetPoint_to_ValveDutyCycle ();
 ../Core/Inc/BCU.h(45): warning:  #1295-D: Deprecated declaration SetPoint_Setting_PID - give arg types
@@ -36,11 +36,21 @@ compiling main.c...
   #endif /* __BCU_H */
 ../Core/Inc/pressures.h(5): warning:  #1-D: last line of file ends without a newline
   #endif /* __PRESSURES_H */
-../Core/Src/main.c: 4 warnings, 0 errors
+../Core/Src/stm32f1xx_it.c(227): warning:  #177-D: variable "mcuVoltage_ADC_codes_arr_size"  was declared but never referenced
+  	size_t mcuVoltage_ADC_codes_arr_size = sizeof(mcuVoltage_ADC_codes_arr)/sizeof(uint32_t);
+../Core/Src/stm32f1xx_it.c(228): warning:  #177-D: variable "PressureINFO_ADC_codes_arr_size"  was declared but never referenced
+  	size_t PressureINFO_ADC_codes_arr_size = sizeof(PressureINFO_ADC_codes_arr)/sizeof(uint32_t);
+../Core/Src/stm32f1xx_it.c(229): warning:  #177-D: variable "ValveINFO_ADC_codes_arr_size"  was declared but never referenced
+  	size_t ValveINFO_ADC_codes_arr_size = sizeof(ValveINFO_ADC_codes_arr)/sizeof(uint32_t);
+../Core/Src/stm32f1xx_it.c(230): warning:  #177-D: variable "mcuVoltage_ADC_code_median"  was declared but never referenced
+  	uint32_t mcuVoltage_ADC_code_median = 0;
+../Core/Src/stm32f1xx_it.c(231): warning:  #177-D: variable "PressureINFO_ADC_code_median"  was declared but never referenced
+  	uint32_t PressureINFO_ADC_code_median = 0;
+../Core/Src/stm32f1xx_it.c: 9 warnings, 0 errors
 linking...
-Program Size: Code=19526 RO-data=394 RW-data=108 ZI-data=3740  
+Program Size: Code=19762 RO-data=394 RW-data=108 ZI-data=3740  
 FromELF: creating hex file...
-"bcu\bcu.axf" - 0 Error(s), 4 Warning(s).
+"bcu\bcu.axf" - 0 Error(s), 9 Warning(s).
 
 <h2>Software Packages used:</h2>
 
@@ -63,7 +73,7 @@ Package Vendor: Keil
 <h2>Collection of Component Files used:</h2>
 
    * Component: ARM::CMSIS:CORE:5.4.0
-Build Time Elapsed:  00:00:03
+Build Time Elapsed:  00:00:05
 </pre>
 </body>
 </html>

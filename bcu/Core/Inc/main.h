@@ -102,7 +102,7 @@ void Error_Handler(void);
 /* USER CODE BEGIN Private defines */
 
 //#define MINIMUM_BATTERY_VOLTAGE 			3.2 /*Voltage devider before ADC. For example battery voltage is 5V, there is 2.5V on stm ADC */
-
+#define floatBREAK_PRESSURE_DIVIDER 			100.0 /*BCU receives needed pressure in value multiplicated by this */
 /* USER CODE END Private defines */
 
 #ifdef __cplusplus

@@ -56,6 +56,7 @@ uint32_t ADC[MEASURING_NUMBER_ALL_CHANNELS]={0};//buffer for reading battery vol
 float mcuVoltage = 3.3; // STM32 power supply voltage
 float PressureINFO_Volts = 0; // Signal from Pressure sensor in Volts (0-5V)
 float PressureINFO_Bars = 0; // Actual pressure in braking system 
+
 uint16_t ValveDutyCycle[1] = {0,}; // PWM duty cycle for Valve setpoint value
 float SetPoint = 0; // Setpoint value for Valve in Bars (0-6 Bar)
 float SetPoint_Volts = 0; // Setpoint value for Valve in Volts (0-10 Volts)
@@ -65,8 +66,8 @@ float ActualPoint = 0; // Actual value in Valve in Volts (0-5V)
 float ActualPoint_Bars = 0;// Actual value in Valve in Bars (0-6 Bar)
 uint8_t Counter_for_PID = 0;
 
-uint32_t PressureINFO_BarsU32 = 0; // Actual pressure in braking system U32
-float NeededBrakePressureBuf = 0; // Needed pressure in braking system 
+uint16_t u16PressureINFO_BarsBuf = 0; // Actual pressure in braking system U32 (BCU sends this value by CAN)
+uint16_t NeededBrakePressureBuf = 0; // Needed pressure in braking system received by CAN
 //float PressureINFO_BarsDebug = 0; // Actual pressure in braking system for Debug
 
 /*********FSG_TEST*************/ // Comment it in final project
@@ -80,7 +81,7 @@ CAN_RxHeaderTypeDef pRxHeader;
 uint32_t TxMailbox;
 uint8_t i = 0;
 uint8_t recieve = 0;
-uint8_t TX_data[1], RX_data[1]; //Buffers for BA_CAN for pressure setting
+uint8_t TX_data[2], RX_data[2]; //Buffers for BA_CAN for pressure setting
 CAN_FilterTypeDef sFilterConfig;
 
 /**************************************/
@@ -160,6 +161,7 @@ int main(void)
 	HAL_ADC_Start_DMA ( &hadc1,  (uint32_t*)ADC, MEASURING_NUMBER_ALL_CHANNELS);
 	HAL_TIM_PWM_Start_DMA(&htim1, TIM_CHANNEL_1, (uint32_t*)ValveDutyCycle, 1);
 	HAL_TIM_Base_Start_IT(&htim1);
+	HAL_TIM_Base_Start_IT(&htim2);
 
   /* USER CODE END 2 */
 
@@ -170,9 +172,14 @@ int main(void)
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
-		TX_data[0] = (uint8_t) (PressureINFO_Bars);		
-		NeededBrakePressure = RX_data[0];
-		HAL_CAN_AddTxMessage(&hcan2, &pTxHeader, TX_data, &TxMailbox);
+	
+		NeededBrakePressureBuf = 0;
+		for (i=0;	i<2; i++) // 2 - since BCU receives 2 bytes
+		{
+			NeededBrakePressureBuf|= (uint32_t) (RX_data[i]<<(8*(2-1-i)));
+		}			
+		NeededBrakePressure = (float)NeededBrakePressureBuf/floatBREAK_PRESSURE_DIVIDER;
+		
   }
   /* USER CODE END 3 */
 }
@@ -320,7 +327,7 @@ static void MX_CAN1_Init(void)
     Error_Handler();
   }
   /* USER CODE BEGIN CAN1_Init 2 */
-	pTxHeader.DLC = 8;
+	pTxHeader.DLC = 2;
 	pTxHeader.IDE = CAN_ID_STD;
 	pTxHeader.RTR = CAN_RTR_DATA;
 	pTxHeader.StdId = 0x0355;
@@ -390,7 +397,7 @@ static void MX_CAN2_Init(void)
     Error_Handler();
   }
   /* USER CODE BEGIN CAN2_Init 2 */
-	pTxHeader.DLC = 1;
+	pTxHeader.DLC = 2;
 	pTxHeader.IDE = CAN_ID_STD;
 	pTxHeader.RTR = CAN_RTR_DATA;
 	pTxHeader.StdId = 0x0750;
@@ -524,7 +531,7 @@ static void MX_TIM2_Init(void)
   htim2.Instance = TIM2;
   htim2.Init.Prescaler = 79;
   htim2.Init.CounterMode = TIM_COUNTERMODE_UP;
-  htim2.Init.Period = 45000;
+  htim2.Init.Period = 9000;
   htim2.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
   htim2.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
   if (HAL_TIM_Base_Init(&htim2) != HAL_OK)
