@@ -2,7 +2,7 @@ Dependencies for Project 'bcu', Target 'bcu': (DO NOT MODIFY !)
 CompilerVersion: 5060750::V5.06 update 6 (build 750)::.\ARMCC
 F (startup_stm32f105xc.s)(0x63A5E93A)(--cpu Cortex-M3 --pd "__EVAL SETA 1" -g --apcs=interwork -I.\RTE\_bcu-IC:\Users\mikha\AppData\Local\Arm\Packs\ARM\CMSIS\5.7.0\CMSIS\Core\Include-IC:\Users\mikha\AppData\Local\Arm\Packs\Keil\STM32F1xx_DFP\2.3.0\Device\Include--pd "__UVISION_VERSION SETA 531" --pd "_RTE_ SETA 1" --pd "STM32F10X_CL SETA 1" --pd "_RTE_ SETA 1"--list startup_stm32f105xc.lst --xref -o bcu\startup_stm32f105xc.o --depend bcu\startup_stm32f105xc.d)
 F (.\BCU.c)(0x62E38CD1)(--c99 -c --cpu Cortex-M3 -D__EVAL -g -O0 --apcs=interwork --split_sections -I ../Core/Inc -I ../Drivers/STM32F1xx_HAL_Driver/Inc -I ../Drivers/STM32F1xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32F1xx/Include -I ../Drivers/CMSIS/Include-I.\RTE\_bcu-IC:\Users\mikha\AppData\Local\Arm\Packs\ARM\CMSIS\5.7.0\CMSIS\Core\Include-IC:\Users\mikha\AppData\Local\Arm\Packs\Keil\STM32F1xx_DFP\2.3.0\Device\Include-D__UVISION_VERSION="531" -D_RTE_ -DSTM32F10X_CL -D_RTE_ -DUSE_HAL_DRIVER -DSTM32F105xC-o bcu\bcu.o --omf_browse bcu\bcu.crf --depend bcu\bcu.d)
-I (../Core/Inc/main.h)(0x63A5F1E2)
+I (../Core/Inc/main.h)(0x63A9C5F8)
 I (../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal.h)(0x61082219)
 I (../Core/Inc/stm32f1xx_hal_conf.h)(0x63A5E933)
 I (../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_rcc.h)(0x61082219)
@@ -36,7 +36,7 @@ I (../Core/Inc/BCU.h)(0x62E2925D)
 I (F:\fs\keil\ARM\ARMCC\include\string.h)(0x5EC7BC54)
 I (F:\fs\keil\ARM\ARMCC\include\math.h)(0x5EC7BC54)
 F (..\Core\Src\Pressures.c)(0x62D83891)(--c99 -c --cpu Cortex-M3 -D__EVAL -g -O0 --apcs=interwork --split_sections -I ../Core/Inc -I ../Drivers/STM32F1xx_HAL_Driver/Inc -I ../Drivers/STM32F1xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32F1xx/Include -I ../Drivers/CMSIS/Include-I.\RTE\_bcu-IC:\Users\mikha\AppData\Local\Arm\Packs\ARM\CMSIS\5.7.0\CMSIS\Core\Include-IC:\Users\mikha\AppData\Local\Arm\Packs\Keil\STM32F1xx_DFP\2.3.0\Device\Include-D__UVISION_VERSION="531" -D_RTE_ -DSTM32F10X_CL -D_RTE_ -DUSE_HAL_DRIVER -DSTM32F105xC-o bcu\pressures.o --omf_browse bcu\pressures.crf --depend bcu\pressures.d)
-I (../Core/Inc/main.h)(0x63A5F1E2)
+I (../Core/Inc/main.h)(0x63A9C5F8)
 I (../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal.h)(0x61082219)
 I (../Core/Inc/stm32f1xx_hal_conf.h)(0x63A5E933)
 I (../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_rcc.h)(0x61082219)
@@ -69,8 +69,8 @@ I (../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_tim_ex.h)(0x61082219)
 I (../Core/Inc/BCU.h)(0x62E2925D)
 I (F:\fs\keil\ARM\ARMCC\include\string.h)(0x5EC7BC54)
 I (../Core/Inc/pressures.h)(0x62D83891)
-F (../Core/Src/main.c)(0x63A5F5D7)(--c99 -c --cpu Cortex-M3 -D__EVAL -g -O0 --apcs=interwork --split_sections -I ../Core/Inc -I ../Drivers/STM32F1xx_HAL_Driver/Inc -I ../Drivers/STM32F1xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32F1xx/Include -I ../Drivers/CMSIS/Include-I.\RTE\_bcu-IC:\Users\mikha\AppData\Local\Arm\Packs\ARM\CMSIS\5.7.0\CMSIS\Core\Include-IC:\Users\mikha\AppData\Local\Arm\Packs\Keil\STM32F1xx_DFP\2.3.0\Device\Include-D__UVISION_VERSION="531" -D_RTE_ -DSTM32F10X_CL -D_RTE_ -DUSE_HAL_DRIVER -DSTM32F105xC-o bcu\main.o --omf_browse bcu\main.crf --depend bcu\main.d)
-I (../Core/Inc/main.h)(0x63A5F1E2)
+F (../Core/Src/main.c)(0x63A9C396)(--c99 -c --cpu Cortex-M3 -D__EVAL -g -O0 --apcs=interwork --split_sections -I ../Core/Inc -I ../Drivers/STM32F1xx_HAL_Driver/Inc -I ../Drivers/STM32F1xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32F1xx/Include -I ../Drivers/CMSIS/Include-I.\RTE\_bcu-IC:\Users\mikha\AppData\Local\Arm\Packs\ARM\CMSIS\5.7.0\CMSIS\Core\Include-IC:\Users\mikha\AppData\Local\Arm\Packs\Keil\STM32F1xx_DFP\2.3.0\Device\Include-D__UVISION_VERSION="531" -D_RTE_ -DSTM32F10X_CL -D_RTE_ -DUSE_HAL_DRIVER -DSTM32F105xC-o bcu\main.o --omf_browse bcu\main.crf --depend bcu\main.d)
+I (../Core/Inc/main.h)(0x63A9C5F8)
 I (../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal.h)(0x61082219)
 I (../Core/Inc/stm32f1xx_hal_conf.h)(0x63A5E933)
 I (../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_rcc.h)(0x61082219)
@@ -103,8 +103,9 @@ I (../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_tim_ex.h)(0x61082219)
 I (../Core/Inc/BCU.h)(0x62E2925D)
 I (F:\fs\keil\ARM\ARMCC\include\string.h)(0x5EC7BC54)
 I (../Core/Inc/pressures.h)(0x62D83891)
-F (../Core/Src/stm32f1xx_it.c)(0x63A5F766)(--c99 -c --cpu Cortex-M3 -D__EVAL -g -O0 --apcs=interwork --split_sections -I ../Core/Inc -I ../Drivers/STM32F1xx_HAL_Driver/Inc -I ../Drivers/STM32F1xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32F1xx/Include -I ../Drivers/CMSIS/Include-I.\RTE\_bcu-IC:\Users\mikha\AppData\Local\Arm\Packs\ARM\CMSIS\5.7.0\CMSIS\Core\Include-IC:\Users\mikha\AppData\Local\Arm\Packs\Keil\STM32F1xx_DFP\2.3.0\Device\Include-D__UVISION_VERSION="531" -D_RTE_ -DSTM32F10X_CL -D_RTE_ -DUSE_HAL_DRIVER -DSTM32F105xC-o bcu\stm32f1xx_it.o --omf_browse bcu\stm32f1xx_it.crf --depend bcu\stm32f1xx_it.d)
-I (../Core/Inc/main.h)(0x63A5F1E2)
+I (F:\fs\keil\ARM\ARMCC\include\math.h)(0x5EC7BC54)
+F (../Core/Src/stm32f1xx_it.c)(0x63A99E7C)(--c99 -c --cpu Cortex-M3 -D__EVAL -g -O0 --apcs=interwork --split_sections -I ../Core/Inc -I ../Drivers/STM32F1xx_HAL_Driver/Inc -I ../Drivers/STM32F1xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32F1xx/Include -I ../Drivers/CMSIS/Include-I.\RTE\_bcu-IC:\Users\mikha\AppData\Local\Arm\Packs\ARM\CMSIS\5.7.0\CMSIS\Core\Include-IC:\Users\mikha\AppData\Local\Arm\Packs\Keil\STM32F1xx_DFP\2.3.0\Device\Include-D__UVISION_VERSION="531" -D_RTE_ -DSTM32F10X_CL -D_RTE_ -DUSE_HAL_DRIVER -DSTM32F105xC-o bcu\stm32f1xx_it.o --omf_browse bcu\stm32f1xx_it.crf --depend bcu\stm32f1xx_it.d)
+I (../Core/Inc/main.h)(0x63A9C5F8)
 I (../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal.h)(0x61082219)
 I (../Core/Inc/stm32f1xx_hal_conf.h)(0x63A5E933)
 I (../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_rcc.h)(0x61082219)
@@ -139,7 +140,7 @@ I (F:\fs\keil\ARM\ARMCC\include\string.h)(0x5EC7BC54)
 I (../Core/Inc/stm32f1xx_it.h)(0x63A5E932)
 I (../Core/Inc/pressures.h)(0x62D83891)
 F (../Core/Src/stm32f1xx_hal_msp.c)(0x63A5E932)(--c99 -c --cpu Cortex-M3 -D__EVAL -g -O0 --apcs=interwork --split_sections -I ../Core/Inc -I ../Drivers/STM32F1xx_HAL_Driver/Inc -I ../Drivers/STM32F1xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32F1xx/Include -I ../Drivers/CMSIS/Include-I.\RTE\_bcu-IC:\Users\mikha\AppData\Local\Arm\Packs\ARM\CMSIS\5.7.0\CMSIS\Core\Include-IC:\Users\mikha\AppData\Local\Arm\Packs\Keil\STM32F1xx_DFP\2.3.0\Device\Include-D__UVISION_VERSION="531" -D_RTE_ -DSTM32F10X_CL -D_RTE_ -DUSE_HAL_DRIVER -DSTM32F105xC-o bcu\stm32f1xx_hal_msp.o --omf_browse bcu\stm32f1xx_hal_msp.crf --depend bcu\stm32f1xx_hal_msp.d)
-I (../Core/Inc/main.h)(0x63A5F1E2)
+I (../Core/Inc/main.h)(0x63A9C5F8)
 I (../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal.h)(0x61082219)
 I (../Core/Inc/stm32f1xx_hal_conf.h)(0x63A5E933)
 I (../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_rcc.h)(0x61082219)

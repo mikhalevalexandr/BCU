@@ -65,11 +65,11 @@ extern DMA_HandleTypeDef hdma_tim1_ch1;
 extern TIM_HandleTypeDef htim1;
 extern TIM_HandleTypeDef htim2;
 /* USER CODE BEGIN EV */
-extern CAN_TxHeaderTypeDef pTxHeader;
-extern CAN_RxHeaderTypeDef pRxHeader;
+extern CAN_TxHeaderTypeDef pTxHeaderBreakPressure;
+extern CAN_RxHeaderTypeDef pRxHeaderpTxHeaderBreakPressure;
 extern uint32_t TxMailbox;
 extern uint8_t i;
-extern uint8_t TX_data[2];
+extern uint8_t xBreakPressureTX_data[2];
 extern uint8_t Counter_for_PID;
 extern uint16_t u16PressureINFO_BarsBuf;
 /* USER CODE END EV */
@@ -394,9 +394,9 @@ void TIM2_IRQHandler(void)
 
 	/*Now this IRQ occurs with frequency 50Hz. We use it to send pressure value by CAN*/
 	u16PressureINFO_BarsBuf = (uint16_t) (PressureINFO_Bars * floatBREAK_PRESSURE_DIVIDER);
-	TX_data[0] = (uint8_t) (u16PressureINFO_BarsBuf >> 8);
-	TX_data[1] = (uint8_t) (u16PressureINFO_BarsBuf & 0x00FF);
-	HAL_CAN_AddTxMessage(&hcan2, &pTxHeader, TX_data, &TxMailbox);
+	xBreakPressureTX_data[0] = (uint8_t) (u16PressureINFO_BarsBuf >> 8);
+	xBreakPressureTX_data[1] = (uint8_t) (u16PressureINFO_BarsBuf & 0x00FF);
+	HAL_CAN_AddTxMessage(&hcan2, &pTxHeaderBreakPressure, xBreakPressureTX_data, &TxMailbox);
 
   /* USER CODE END TIM2_IRQn 1 */
 }

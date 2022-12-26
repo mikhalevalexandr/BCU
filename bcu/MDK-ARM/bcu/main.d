@@ -34,3 +34,4 @@ bcu\main.o: ../Core/Inc/BCU.h
 bcu\main.o: ../Core/Inc/main.h
 bcu\main.o: F:\fs\keil\ARM\ARMCC\Bin\..\include\string.h
 bcu\main.o: ../Core/Inc/pressures.h
+bcu\main.o: F:\fs\keil\ARM\ARMCC\Bin\..\include\math.h

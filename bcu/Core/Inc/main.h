@@ -101,8 +101,17 @@ void Error_Handler(void);
 #define MAINCAN_TX_GPIO_Port GPIOB
 /* USER CODE BEGIN Private defines */
 
-//#define MINIMUM_BATTERY_VOLTAGE 			3.2 /*Voltage devider before ADC. For example battery voltage is 5V, there is 2.5V on stm ADC */
-#define floatBREAK_PRESSURE_DIVIDER 			100.0 /*BCU receives needed pressure in value multiplicated by this */
+//#define MINIMUM_BATTERY_VOLTAGE 			3.2 		/*Voltage devider before ADC. For example battery voltage is 5V, there is 2.5V on stm ADC */
+#define floatBREAK_PRESSURE_DIVIDER 			100.0 /*BCU receives needed pressure from CAN in value multiplicated by this */
+#define floatVALVE_PRESSURE_DISCREPANCY		3.0 	/*If dicrepancy between SetPoint and ActualPoint pressure is more then 
+																								  this value for u32MAX_TICKS_ERROR BCU sends error by CAN*/
+#define floatBREAK_PRESSURE_DISCREPANCY		10.0 	/*If dicrepancy between needed and real break pressure is more then 
+																								  this value for u32MAX_TICKS_ERROR BCU sends error by CAN*/
+#define u32MAX_TICKS_ERROR								1000	/*If dicrepancy between needed and real break pressure is more then 
+																								  floatVALVE_PRESSURE_DISCREPANCY BCU for u32MAX_TICKS_ERROR sends error by CAN*/																						 
+
+#define	VALVE_ERROR                  			0x01 			/* Большая разница между устанавливаемым давлением в пневмоцилиндре и реальным*/
+#define BREAK_ERROR                       0x02 		  /* Большая разница между устанавливаемым давлением в тормозной системе и реальным*/
 /* USER CODE END Private defines */
 
 #ifdef __cplusplus

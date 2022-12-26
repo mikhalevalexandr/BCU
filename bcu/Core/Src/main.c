@@ -23,6 +23,7 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include "pressures.h"
+#include "math.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -67,21 +68,23 @@ float ActualPoint_Bars = 0;// Actual value in Valve in Bars (0-6 Bar)
 uint8_t Counter_for_PID = 0;
 
 uint16_t u16PressureINFO_BarsBuf = 0; // Actual pressure in braking system U32 (BCU sends this value by CAN)
-uint16_t NeededBrakePressureBuf = 0; // Needed pressure in braking system received by CAN
-//float PressureINFO_BarsDebug = 0; // Actual pressure in braking system for Debug
-
+uint16_t NeededBrakePressureBuf = 0; 	// Needed pressure in braking system received by CAN
+//float PressureINFO_BarsDebug = 0; 	// Actual pressure in braking system for Debug
 /*********FSG_TEST*************/ // Comment it in final project
 uint16_t Pressurescounter = 0;
 uint8_t Circle = 0;
 
 /*****************CAN******************/
 
-CAN_TxHeaderTypeDef pTxHeader; 
-CAN_RxHeaderTypeDef pRxHeader;
+CAN_TxHeaderTypeDef pTxHeaderBreakPressure; 
+CAN_TxHeaderTypeDef pTxHeaderError; 
+CAN_RxHeaderTypeDef pRxHeaderBreakPressure;
 uint32_t TxMailbox;
+uint32_t TxMailboxError;
 uint8_t i = 0;
 uint8_t recieve = 0;
-uint8_t TX_data[2], RX_data[2]; //Buffers for BA_CAN for pressure setting
+uint8_t xBreakPressureTX_data[2], xBreakPressureRX_data[2]; //Buffers for BA_CAN for pressure setting
+uint8_t xPressureStatus[1] = {0};
 CAN_FilterTypeDef sFilterConfig;
 
 /**************************************/
@@ -130,6 +133,8 @@ int main(void)
 //	uint16_t i = 0;
 //  TX_data[0] = 124;
 //	PressureINFO_BarsDebug = 10.5;
+	uint32_t u32LastTick = 0U;
+	uint32_t u32CurrentTick = 0U;
   /* USER CODE END 1 */
 
   /* MCU Configuration--------------------------------------------------------*/
@@ -162,7 +167,8 @@ int main(void)
 	HAL_TIM_PWM_Start_DMA(&htim1, TIM_CHANNEL_1, (uint32_t*)ValveDutyCycle, 1);
 	HAL_TIM_Base_Start_IT(&htim1);
 	HAL_TIM_Base_Start_IT(&htim2);
-
+	u32LastTick = HAL_GetTick();
+	u32CurrentTick = u32LastTick;
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -176,9 +182,56 @@ int main(void)
 		NeededBrakePressureBuf = 0;
 		for (i=0;	i<2; i++) // 2 - since BCU receives 2 bytes
 		{
-			NeededBrakePressureBuf|= (uint32_t) (RX_data[i]<<(8*(2-1-i)));
-		}			
-		NeededBrakePressure = (float)NeededBrakePressureBuf/floatBREAK_PRESSURE_DIVIDER;
+			NeededBrakePressureBuf|= (uint32_t) (xBreakPressureRX_data[i]<<(8*(2-1-i)));
+		}		
+		/*If value is ok*/
+		if (isnan(NeededBrakePressureBuf) != 1)
+		{
+			/*set this value in break system*/
+			NeededBrakePressure = (float)NeededBrakePressureBuf/floatBREAK_PRESSURE_DIVIDER;
+		}
+		u32CurrentTick = HAL_GetTick();
+		if ( ( u32CurrentTick - u32LastTick ) > u32MAX_TICKS_ERROR )
+		{
+			u32LastTick = HAL_GetTick();
+			if ( ( ( fabs(NeededBrakePressure - PressureINFO_Bars) > floatBREAK_PRESSURE_DISCREPANCY	) &&
+					 ( ( xPressureStatus[0] & BREAK_ERROR ) != 0 ) ) || 
+					 ( ( fabs(SetPoint - ActualPoint_Bars) > floatVALVE_PRESSURE_DISCREPANCY	) &&
+					 ( ( xPressureStatus[0] & VALVE_ERROR ) != 0 ) )
+				 )
+			{
+				HAL_CAN_AddTxMessage(&hcan1, &pTxHeaderError, xPressureStatus, &TxMailboxError);
+				if ( ( xPressureStatus[0]  & BREAK_ERROR ) != 0 )
+				{
+					xPressureStatus[0] &= ~BREAK_ERROR;
+				}
+				if ( ( xPressureStatus[0]  & VALVE_ERROR ) != 0 )
+				{
+					xPressureStatus[0] &= ~VALVE_ERROR;
+				}
+			}		
+			if ( (fabs(NeededBrakePressure - PressureINFO_Bars) > floatBREAK_PRESSURE_DISCREPANCY) &&
+					 ( ( xPressureStatus[0] & BREAK_ERROR ) == 0 )
+				 )
+			{
+				xPressureStatus[0] |= BREAK_ERROR;
+			}	
+			else if ( fabs(NeededBrakePressure - PressureINFO_Bars) < floatBREAK_PRESSURE_DISCREPANCY )
+			{
+				xPressureStatus[0] &= ~BREAK_ERROR;
+			}
+			
+			if ( (fabs(SetPoint - ActualPoint_Bars) > floatVALVE_PRESSURE_DISCREPANCY) &&
+					 ( ( xPressureStatus[0] & VALVE_ERROR ) == 0 )
+				 )
+			{
+				xPressureStatus[0] |= VALVE_ERROR;
+			}	
+			else if ( fabs(SetPoint - ActualPoint_Bars) < floatVALVE_PRESSURE_DISCREPANCY )
+			{
+				xPressureStatus[0] &= ~VALVE_ERROR;
+			}	
+		}
 		
   }
   /* USER CODE END 3 */
@@ -327,20 +380,20 @@ static void MX_CAN1_Init(void)
     Error_Handler();
   }
   /* USER CODE BEGIN CAN1_Init 2 */
-	pTxHeader.DLC = 2;
-	pTxHeader.IDE = CAN_ID_STD;
-	pTxHeader.RTR = CAN_RTR_DATA;
-	pTxHeader.StdId = 0x0355;
-	pTxHeader.TransmitGlobalTime = DISABLE;
+	pTxHeaderError.DLC = 1;
+	pTxHeaderError.IDE = CAN_ID_STD;
+	pTxHeaderError.RTR = CAN_RTR_DATA;
+	pTxHeaderError.StdId = 0x0751;
+	pTxHeaderError.TransmitGlobalTime = DISABLE;
 
 	sFilterConfig.FilterBank = 0;
 	sFilterConfig.FilterMode = CAN_FILTERMODE_IDLIST;
 	sFilterConfig.FilterFIFOAssignment = CAN_RX_FIFO0;
 	sFilterConfig.SlaveStartFilterBank = 0;
-	sFilterConfig.FilterIdHigh = 0x00fe<<5;
-	sFilterConfig.FilterIdLow = 0x0002<<5;
-	sFilterConfig.FilterMaskIdHigh = 0x0003<<5;
-	sFilterConfig.FilterMaskIdLow = 0x0004<<5;
+	sFilterConfig.FilterIdHigh = 0x0521<<5;
+	sFilterConfig.FilterIdLow = 0x0521<<5;
+	sFilterConfig.FilterMaskIdHigh = 0x0521<<5;
+	sFilterConfig.FilterMaskIdLow = 0x0521<<5;
 	sFilterConfig.FilterScale = CAN_FILTERSCALE_16BIT;
 	sFilterConfig.FilterActivation = ENABLE;
   
@@ -397,12 +450,13 @@ static void MX_CAN2_Init(void)
     Error_Handler();
   }
   /* USER CODE BEGIN CAN2_Init 2 */
-	pTxHeader.DLC = 2;
-	pTxHeader.IDE = CAN_ID_STD;
-	pTxHeader.RTR = CAN_RTR_DATA;
-	pTxHeader.StdId = 0x0750;
-	pTxHeader.TransmitGlobalTime = DISABLE;
-
+	
+	pTxHeaderBreakPressure.DLC = 2;
+	pTxHeaderBreakPressure.IDE = CAN_ID_STD;
+	pTxHeaderBreakPressure.RTR = CAN_RTR_DATA;
+	pTxHeaderBreakPressure.StdId = 0x0750;
+	pTxHeaderBreakPressure.TransmitGlobalTime = DISABLE;
+	
 	sFilterConfig.FilterBank = 0;
 	sFilterConfig.FilterMode = CAN_FILTERMODE_IDLIST;
 	sFilterConfig.FilterFIFOAssignment = CAN_RX_FIFO0;
@@ -591,7 +645,7 @@ static void MX_GPIO_Init(void)
 
 /* USER CODE BEGIN 4 */
 void HAL_CAN_RxFifo0MsgPendingCallback(CAN_HandleTypeDef *hcan){
-	HAL_CAN_GetRxMessage(hcan, CAN_RX_FIFO0, &pRxHeader, RX_data);
+	HAL_CAN_GetRxMessage(hcan, CAN_RX_FIFO0, &pRxHeaderBreakPressure, xBreakPressureRX_data);
 }
 void HAL_CAN_TxMailbox0CompleteCallback(CAN_HandleTypeDef*hcan) {
 //	HAL_GPIO_TogglePin(GPIOC, Led_Pin);
